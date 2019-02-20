@@ -1,0 +1,22 @@
+/data/songtao/metalearning/dataset/global/boston/region15_sat.png   white buildings
+/data/songtao/metalearning/dataset/global/tokyo/region15_sat.png 
+
+
+＃ Cars
+file:///Users/songtaohe/Project/MapMaker/meta-learning/code/visWholeCityRank.html?7998?boston
+file:///Users/songtaohe/Project/MapMaker/meta-learning/code/visWholeCity.html?7998?boston
+
+
+# flood 
+/data/songtao/metalearning/dataset/flood/flood_lumberton_A_1.jpg
+
+
+
+/data/songtao/metalearning/dataset/flood/flood_lumberton_A_3.jpg
+0.228515625,0.166015625,0.251953125,0.27734375
+60
+0.001
+
+
+
+

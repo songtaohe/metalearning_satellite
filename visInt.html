@@ -1,0 +1,280 @@
+<html>
+    <script type="text/javascript">
+
+    var url = window.location.href;
+    var params = url.split('?');
+    alert(params[1]+params[2]+params[3]);
+
+    var cc = 0
+
+    var canvas, ctx, flag = false,
+        prevX = 0,
+        currX = 0,
+        prevY = 0,
+        currY = 0,
+        dot_flag = false;
+
+    var x = "rgba(0, 255, 0, 1.0)",
+        y = 10;
+    
+    function init() {
+        canvas = document.getElementById('can');
+        canvasBK = document.getElementById('canBK');
+        canvasRet = document.getElementById('canret');
+
+
+
+        ctx = canvas.getContext("2d");
+        ctxBK = canvasBK.getContext("2d");
+        ctxRet = canvasRet.getContext("2d");
+
+        ctx.globalAlpha = 0.5;
+        w = canvas.width;
+        h = canvas.height;
+    
+        canvas.addEventListener("mousemove", function (e) {
+            findxy('move', e)
+        }, false);
+        canvas.addEventListener("mousedown", function (e) {
+            findxy('down', e)
+        }, false);
+        canvas.addEventListener("mouseup", function (e) {
+            findxy('up', e)
+        }, false);
+        canvas.addEventListener("mouseout", function (e) {
+            findxy('out', e)
+        }, false);
+
+        //var img = document.createElement('img');
+        var img = new Image;
+        //img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+params[3]+"_sat.png";
+        img.src = "http://localhost:8000/upload/train_sat.png?"+ new Date().getTime();
+
+        //var bbk = document.getElementById("bk")
+        //bbk.src = img.src 
+        
+        
+        img.onload = function(){
+           ctxBK.drawImage(img ,0,0,512,512); // Or at whatever offset you like
+        };
+        //ctx.drawImage(img, 0, 0);
+
+    }
+    
+
+    function updateResult() {
+        var img = new Image;
+        
+
+        if (cc % 15 < 5) {
+            img.src = "http://localhost:8000/upload/test_output_BW.png?"+ Math.random();
+        } else {
+            img.src = "http://localhost:8000/upload/test_output_soft.png?"+ Math.random();
+        }
+
+        img.onload = function(){
+           console.log("update result")
+           ctxRet.drawImage(img ,0,0,800,800); // Or at whatever offset you like
+           //setTimeout(updateResult, 1);
+           
+        };
+        
+
+        
+    }
+
+    setInterval(function() {
+        updateResult()
+        // var myImageElement = document.getElementById('myImage');
+
+        // if (cc % 15 < 5) {
+        //     myImageElement.src = 'http://localhost:8000/upload/test_output_BW.png?rand=' + Math.random();
+        // } else {
+        //     myImageElement.src = 'http://localhost:8000/upload/test_output_soft.png?rand=' + Math.random();
+        // }
+
+        // console.log("update result")
+
+    }, 5000);
+
+    //setTimeout(updateResult, 1000);
+
+
+
+    function color(obj) {
+        switch (obj.id) {
+            case "green":
+                x = "rgba(0, 255, 0, 1.0)";
+                y = 3;
+                break;
+            case "blue":
+                x = "rgba(0, 255, 0, 1.0)";
+                y = 5;
+                break;
+            case "red":
+                x = "rgba(0, 255, 0, 1.0)";
+                y = 7;
+                break;
+            case "yellow":
+                x = "rgba(0, 255, 0, 1.0)";
+                y = 9;
+                break;
+            case "orange":
+                x = "rgba(0, 255, 0, 1.0)";
+                y = 12;
+                break;
+            case "black":
+                x = "rgba(0, 255, 0, 1.0)";
+                y = 15;
+                break;
+            case "white":
+                x = "rgba(0, 0, 0, 1.0)";
+                y = 20;
+                break;
+        }
+
+
+        //if (x == "white") y = 14;
+        //else y = 10;
+    
+    }
+    
+    function draw() {
+
+        ctx.lineCap = "round"
+
+        if (y==20) {
+            ctx.clearRect(currX-20, currY-20, 40, 40);
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(currX, currY);
+            ctx.strokeStyle = x;
+            ctx.lineWidth = y;
+            ctx.stroke();
+            ctx.closePath();
+        }
+
+
+        //a = document.getElementById("download");
+        a = document.createElement("a");
+        a.href = canvas.toDataURL();
+        a.download = "download";
+        a.click();
+
+        // document.getElementById("body").appendChild("<a id='hiddenLink' href='" + canvas.toDataURL() + "' style='display:none;' download>Download Pic</a>");
+        // document.getElementById("#hiddenLink")[0].click();
+        // document.getElementById("#hiddenLink").remove();
+
+
+    }
+    
+    function erase() {
+        var m = confirm("Want to clear");
+        if (m) {
+            ctx.clearRect(0, 0, w, h);
+            document.getElementById("canvasimg").style.display = "none";
+        }
+    }
+    
+
+    var sendBase64ToServer = function(name, base64){
+        var httpPost = new XMLHttpRequest(),
+            path = "http://localhost:8080/upload/" + name,
+            data = JSON.stringify({image: base64});
+        httpPost.onreadystatechange = function(err) {
+                if (httpPost.readyState == 4 && httpPost.status == 200){
+                    console.log(httpPost.responseText);
+                } else {
+                    console.log(err);
+                }
+            };
+        // Set the content type of the request to json since that's what's being sent
+        //httpPost.setHeader('Content-Type', 'application/json');
+        httpPost.open("POST", path, true);
+        httpPost.send(data);
+    };
+
+
+
+    function save() {
+        //updateResult()
+
+        if (cc < 5 ) {
+            cc = 10
+        } else {
+            cc = 0
+        }
+
+        console.log(cc)
+
+        // document.getElementById("canvasimg").style.border = "2px solid";
+        // var dataURL = canvas.toDataURL();
+        // document.getElementById("canvasimg").src = dataURL;
+        // document.getElementById("canvasimg").style.display = "inline";
+
+
+        //sendBase64ToServer("test.png", dataURL)
+    }
+    
+    function findxy(res, e) {
+        if (res == 'down') {
+            prevX = currX;
+            prevY = currY;
+            currX = e.clientX - canvas.offsetLeft;
+            currY = e.clientY - canvas.offsetTop;
+    
+            flag = true;
+            dot_flag = true;
+            if (dot_flag) {
+                ctx.beginPath();
+                ctx.fillStyle = x;
+                ctx.fillRect(currX, currY, 2, 2);
+                ctx.closePath();
+                dot_flag = false;
+            }
+        }
+        if (res == 'up' || res == "out") {
+            flag = false;
+        }
+        if (res == 'move') {
+            if (flag) {
+                prevX = currX;
+                prevY = currY;
+                currX = e.clientX - canvas.offsetLeft;
+                currY = e.clientY - canvas.offsetTop;
+                draw();
+            }
+        }
+    }
+    </script>
+    <body onload="init()">
+        <div style="position:absolute;top:20;left:20;" id="bk" ></div>
+        <canvas id="canBK" width="512" height="512" style="position:absolute;top:20;left:20;border:2px solid;"></canvas>
+        
+        <canvas id="can" width="512" height="512" style="position:absolute;top:20;left:20;border:2px solid;"></canvas>
+        
+        <canvas id="canret" width="800" height="800" style="position:absolute;top:20;left:640;border:2px solid;"></canvas>
+
+        <!-- <img src="screen.jpg" id="myImage" width="800" height="800" style="position:absolute;top:20;left:640;border:2px solid;"/> -->
+        
+        <div style="position:absolute;top:640;left:120;">Choose Size:</div>
+        <div style="position:absolute;top:640;left:260;width:3px;height:3px;background:green;" id="green" onclick="color(this)"></div>
+        <div style="position:absolute;top:640;left:280;width:5px;height:5px;background:blue;" id="blue" onclick="color(this)"></div>
+        <div style="position:absolute;top:640;left:300;width:7px;height:7px;background:red;" id="red" onclick="color(this)"></div>
+        <div style="position:absolute;top:640;left:320;width:9px;height:9px;background:yellow;" id="yellow" onclick="color(this)"></div>
+        <div style="position:absolute;top:640;left:340;width:12px;height:12px;background:orange;" id="orange" onclick="color(this)"></div>
+        <div style="position:absolute;top:640;left:360;width:15px;height:15px;background:black;" id="black" onclick="color(this)"></div>
+        <div style="position:absolute;top:640;left:400;">Eraser</div>
+        <div style="position:absolute;top:540;left:70;font-size:30px;">Show just one example to the model.  </div>
+        <div style="position:absolute;top:580;left:70;font-size:30px;">Generate the output for the region --->  </div>
+        <div style="position:absolute;top:640;left:480;width:15px;height:15px;background:white;border:2px solid;" id="white" onclick="color(this)"></div>
+        <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
+
+        <input type="button" value="switch" id="btn" size="30" onclick="save()" style="position:absolute;top:640;left:20;">
+        <input type="button" value="clear" id="clr" size="23" onclick="erase()" style="position:absolute;top:640;left:70;">
+
+        <div id='download'>
+</div>  
+    </body>
+    </html>

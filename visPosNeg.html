@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='111'>
+</div>
+
+
+<script type="text/javascript">
+    var url = window.location.href;
+    var params = url.split('?');
+    alert(params[1]+params[2]+params[3]);
+
+	var mDiv=document.getElementById("111")
+    for (j = 0; j < 10; j++) { 
+	for (i = 0; i < 5; i++) { 
+		var img = document.createElement('img');
+    	img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+j.toString()+"_"+i.toString()+"_sat.png";
+    	img.style.width = '20%'
+    	img.style.height = '20%'
+    	mDiv.appendChild(img);
+
+    }
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+
+    for (i = 0; i < 5; i++) { 
+        var img = document.createElement('img');
+        img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+j.toString()+"_"+i.toString()+"_task1_input.png";
+        img.style.width = '20%'
+        img.style.height = '20%'
+        mDiv.appendChild(img);
+
+    }
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+
+    for (i = 0; i < 5; i++) { 
+        var img = document.createElement('img');
+        img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+j.toString()+"_"+i.toString()+"_task1_target.png";
+        img.style.width = '20%'
+        img.style.height = '20%'
+        mDiv.appendChild(img);
+
+    }
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+
+    for (i = 0; i < 5; i++) { 
+        var img = document.createElement('img');
+        img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+j.toString()+"_"+i.toString()+"_task1_output.png";
+        img.style.width = '20%'
+        img.style.height = '20%'
+        mDiv.appendChild(img);
+
+    }
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+    for (i = 0; i < 5; i++) { 
+        var img = document.createElement('img');
+        img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+j.toString()+"_"+i.toString()+"_task3_target.png";
+        img.style.width = '20%'
+        img.style.height = '20%'
+        mDiv.appendChild(img);
+
+    }
+    linebreak = document.createElement("br");
+        mDiv.appendChild(linebreak);
+    
+
+    for (i = 0; i < 5; i++) { 
+        var img = document.createElement('img');
+        img.src = "http://localhost:8000/"+params[1]+"/img_"+params[2]+"_"+j.toString()+"_"+i.toString()+"_task3_output.png";
+        img.style.width = '20%'
+        img.style.height = '20%'
+        mDiv.appendChild(img);
+
+    }
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+
+        
+    }
+
+</script>    
+
+</body>
+</html>

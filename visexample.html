@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='111'>
+</div>
+
+
+<script type="text/javascript">
+	var mDiv=document.getElementById("111")
+    for (j = 1; j < 6; j++) { 
+	for (i = 0; i < 5; i++) { 
+		var img = document.createElement('img');
+    	img.src = "http://localhost:7999/example/e"+j.toString()+"/example_"+i.toString()+"_sat.png";
+    	img.style.width = '14%'
+    	img.style.height = '14%'
+        img.style.border = "2px solid white";
+    	mDiv.appendChild(img);
+
+    }
+
+	linebreak = document.createElement("br");
+	mDiv.appendChild(linebreak);
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+
+
+    for (i = 0; i < 5; i++) { 
+        var img = document.createElement('img');
+        img.src = "http://localhost:7999/example/e"+j.toString()+"/example_"+i.toString()+"_target.png";
+        img.style.width = '14%'
+        img.style.height = '14%'
+        img.style.border = "2px solid white";
+        mDiv.appendChild(img);
+
+    }
+
+    linebreak = document.createElement("br");
+    mDiv.appendChild(linebreak);
+
+
+    
+    }
+
+</script>    
+
+</body>
+</html>

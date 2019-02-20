@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='111'>
+</div>
+
+
+<script type="text/javascript">
+    var url = window.location.href;
+    var params = url.split('?');
+    alert(params[1]+params[2]+params[3]);
+
+	var mDiv=document.getElementById("111")
+    for (j = 0; j < 32; j++) { 
+	for (i = 0; i < 8; i++) { 
+		var img = document.createElement('img');
+    	img.src = "http://localhost:"+params[1]+"/upload/whole_city_test_"+params[2]+"/rank"+(j*8+i).toString()+".png";
+    	img.style.width = '12.5%'
+    	img.style.height = '12.5%'
+
+
+    	mDiv.appendChild(img);
+
+    }
+     linebreak = document.createElement("br");
+        mDiv.appendChild(linebreak);
+    }
+
+</script>    
+
+</body>
+</html>

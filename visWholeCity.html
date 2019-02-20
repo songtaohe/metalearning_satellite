@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='111'>
+</div>
+
+
+<script type="text/javascript">
+    var url = window.location.href;
+    var params = url.split('?');
+    alert(params[1]+params[2]+params[3]);
+
+	var mDiv=document.getElementById("111")
+    for (j = 0; j < 6; j++) { 
+	for (i = 0; i < 6; i++) { 
+		var img = document.createElement('img');
+    	img.src = "http://localhost:"+params[1]+"/upload/whole_city_test_"+params[2]+"/region"+((5-j)*6+i).toString()+params[3]+".png";
+    	img.style.width = '300px'
+    	img.style.height = '300px'
+        //position:absolute;top:580;left:400;
+        img.style.position = 'absolute'
+        img.style.top = (j*300).toString()+'px'
+        img.style.left = (i*300).toString()+'px'
+    	mDiv.appendChild(img);
+
+    }
+     // linebreak = document.createElement("br");
+     //    mDiv.appendChild(linebreak);
+    }
+
+</script>    
+
+</body>
+</html>

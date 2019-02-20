@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id='111'>
+</div>
+
+
+<script type="text/javascript">
+    var url = window.location.href;
+    var params = url.split('?');
+    alert(params[1]+params[2]+params[3]);
+
+	var mDiv=document.getElementById("111")
+    for (j = 0; j < 38; j++) { 
+    	for (i = 0; i < 15; i++) { 
+    		var img = document.createElement('img');
+        	img.src = "http://localhost:8000/"+params[1]+"/img_"+j.toString()+"_"+i.toString()+"_sat.png";
+        	img.style.width = '5%'
+        	img.style.height = '5%'
+        	mDiv.appendChild(img);
+        }
+        linebreak = document.createElement("br");
+        mDiv.appendChild(linebreak);
+        for (i = 0; i < 15; i++) { 
+            var img = document.createElement('img');
+            img.src = "http://localhost:8000/"+params[1]+"/img_"+j.toString()+"_"+i.toString()+"_output.png";
+            img.style.width = '5%'
+            img.style.height = '5%'
+            mDiv.appendChild(img);
+        }
+        linebreak = document.createElement("br");
+        mDiv.appendChild(linebreak);
+        for (i = 0; i < 15; i++) { 
+            var img = document.createElement('img');
+            img.src = "http://localhost:8000/"+params[1]+"/img_"+j.toString()+"_"+i.toString()+"_target.png";
+            img.style.width = '5%'
+            img.style.height = '5%'
+            mDiv.appendChild(img);
+        }
+        linebreak = document.createElement("br");
+        mDiv.appendChild(linebreak);
+
+
+
+
+    }
+
+</script>    
+
+</body>
+</html>
