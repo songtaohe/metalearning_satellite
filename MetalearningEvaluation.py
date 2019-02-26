@@ -191,7 +191,7 @@ class BenchmarkTestCase():
 		for i in xrange(self.train_iteration+1):
 			example_inputA,example_targetA = sampler()
 			_, loss = self.model.trainBaselineModel(example_inputA,example_targetA, scale = lr_scale)
-			scale *= 0.9
+			lr_scale *= 0.9
 			if i % 10 == 0:
 				print(i,loss)
 
