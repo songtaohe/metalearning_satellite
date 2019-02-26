@@ -135,7 +135,7 @@ class BenchmarkTestCase():
 
 
 
-	def _default_sampler(self, img_ids = [0], example_sample = 20):
+	def _default_sampler(self, img_ids = [0], example_sample = 10):
 		
 		def sampler():
 			example_inputA = np.zeros((example_sample, 512,512,3))
