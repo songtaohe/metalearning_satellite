@@ -47,19 +47,19 @@ class BenchmarkTestCase():
 
 		for i in xrange(number_of_image):
 			try:
-				sat_img = scipy.ndimage.imread(folder_name+"/sat%d.png"%i).astype(np.float)/256.0 # 256.0  be consistent with dataloader20180429
+				sat_img = scipy.ndimage.imread(folder_name+"/sat%d.png"%i).astype(np.float)/255.0 # 256.0  be consistent with dataloader20180429
 			except:
 				try:
-					sat_img = scipy.ndimage.imread(folder_name+"/sat%d.jpg"%i).astype(np.float)/256.0 # 256.0  be consistent with dataloader20180429
+					sat_img = scipy.ndimage.imread(folder_name+"/sat%d.jpg"%i).astype(np.float)/255.0 # 256.0  be consistent with dataloader20180429
 				except:
 					print("can't find ", folder_name+"/sat%d.jpg/png"%i)
 					exit() 
 
 			try:
-				target_img = scipy.ndimage.imread(folder_name+"/target%d.png"%i).astype(np.float)/256.0 # 256.0  be consistent with dataloader20180429
+				target_img = scipy.ndimage.imread(folder_name+"/target%d.png"%i).astype(np.float)/255.0 # 256.0  be consistent with dataloader20180429
 			except:
 				try:
-					target_img = scipy.ndimage.imread(folder_name+"/target%d.jpg"%i).astype(np.float)/256.0 # 256.0  be consistent with dataloader20180429
+					target_img = scipy.ndimage.imread(folder_name+"/target%d.jpg"%i).astype(np.float)/255.0 # 256.0  be consistent with dataloader20180429
 				except:
 					print("can't find ", folder_name+"/target%d.jpg/png"%i)
 					exit() 
