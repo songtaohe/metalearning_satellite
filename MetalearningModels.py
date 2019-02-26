@@ -154,12 +154,12 @@ class MAMLBase(object):
 
 class MAMLFirstOrder(MAMLBase):
 	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):
-		super(MAMLFirstOrder, self).__init__(num_test_updates, inner_lr, CNNmodel.buildMetaBlockV1, CNNmodel.build_unet512_12_V1, build_cnn_model = build_unet512_12_V1_fixed, run_cnn_model = run_unet512_12_V1_fixed)
+		super(MAMLFirstOrder, self).__init__(num_test_updates, inner_lr, CNNmodel.buildMetaBlockV1, CNNmodel.build_unet512_12_V1, build_cnn_model = CNNmodel.build_unet512_12_V1_fixed, run_cnn_model = CNNmodel.run_unet512_12_V1_fixed)
 
 
 class MAMLFirstOrderMultiResolution(MAMLBase):
 	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):
-		super(MAMLFirstOrderMultiResolution, self).__init__(num_test_updates, inner_lr, CNNmodel.buildMetaBlockV1, CNNmodel.build_unet512_12_V1, build_cnn_model = build_unet512_12_V1_fixed, run_cnn_model = run_unet512_12_V1_fixed)
+		super(MAMLFirstOrderMultiResolution, self).__init__(num_test_updates, inner_lr, CNNmodel.buildMetaBlockV1, CNNmodel.build_unet512_12_V1, build_cnn_model = CNNmodel.build_unet512_12_V1_fixed, run_cnn_model = CNNmodel.run_unet512_12_V1_fixed)
 
 
 
