@@ -207,7 +207,7 @@ class BenchmarkTestCase():
 		# print("Recall:", float(I)/float(G))
 
 
-		return float(I)/float(U), float(I)/float(O), float(I)/float(G)
+		return float(I)/float(U+1), float(I)/float(O+1), float(I)/float(G+1)
 
 
 	def EvaluateOneShot(self): #use one example
