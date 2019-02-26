@@ -66,7 +66,7 @@ class MAMLBase(object):
 
 		self.baseline_output = tf.nn.softmax(self.baseline_output_)
 		self.baseline_loss = CrossEntropy(self.baseline_output_, self.outputA)
-		self.baseline_train_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr).minimize(self.baseline_loss)
+		self.baseline_train_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr, beta1 = 0.1, beta2 = 0.1).minimize(self.baseline_loss)
 
 
 
