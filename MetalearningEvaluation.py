@@ -173,7 +173,7 @@ class BenchmarkTestCase():
 					example_inputA[i, :,:,:] = example_inputA_crop
 					example_targetA[i,:,:,0] = example_targetA_crop
 
-					if np.sum(example_targetA_crop)>500.0 or i>example_sample*0.6 :
+					if np.sum(example_targetA_crop)>6.0 or i>example_sample*0.6 :
 						break
 
 					cc = cc + 1
