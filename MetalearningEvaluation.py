@@ -64,7 +64,7 @@ class BenchmarkTestCase():
 					print("can't find ", folder_name+"/target%d.jpg/png"%i)
 					exit() 
 
-			self.sat_imgs.append(sat_img)
+			self.sat_imgs.append(sat_img[:,:,0:3])
 			self.target_imgs.append(target_img[:,:,0])
 
 
