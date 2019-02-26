@@ -258,7 +258,7 @@ if __name__ == "__main__":
 					last_longterm_loss = longterm_loss
 					longterm_loss = 0
 
-					if step % 5000 == 0:
+					if step % 5000 == 0 and step > 5000 * 100:
 						model.meta_lr_val = model.meta_lr_val / 1.1
 						print("change lr to", model.meta_lr_val)
 
