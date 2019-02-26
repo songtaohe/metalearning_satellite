@@ -69,7 +69,7 @@ class BenchmarkTestCase():
 
 
 	def _reset(self):
-		self.model_reset_func(_) 
+		self.model_reset_func(0) 
 
 
 
