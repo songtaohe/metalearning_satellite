@@ -13,6 +13,7 @@ import CNNmodel
 from subprocess import Popen
 import inputFilter 
 
+image_size = 512
 
 def lrelu(x, alpha):
 	return tf.nn.relu(x) - alpha * tf.nn.relu(-x)
