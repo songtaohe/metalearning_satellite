@@ -135,7 +135,7 @@ class BenchmarkTestCase():
 
 
 
-	def _default_sampler(self, img_ids = [0], example_sample = 10):
+	def _default_sampler(self, img_ids = [0], example_sample = 20):
 		
 		def sampler():
 			example_inputA = np.zeros((example_sample, 512,512,3))
@@ -185,7 +185,7 @@ class BenchmarkTestCase():
 		return sampler 
 
 
-	def _train(self, sampler, decay = 1.0):
+	def _train(self, sampler, decay = 0.95):
 
 		lr_scale = 1.0 
 		for i in xrange(self.train_iteration+1):
