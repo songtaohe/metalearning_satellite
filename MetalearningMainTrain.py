@@ -9,7 +9,7 @@ import scipy
 from PIL import Image
 import os, datetime
 import numpy as np
-
+import tensorflow as tf
 
 
 parser = argparse.ArgumentParser()
