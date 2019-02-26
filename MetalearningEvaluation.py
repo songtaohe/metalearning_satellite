@@ -36,7 +36,7 @@ print(args)
 class BenchmarkTestCase():
 	def __init__(self, model, model_reset_func, folder_name, number_of_image = 2, train_iteration=20, train_lr = 0.001, name = "default"):
 		self.sat_imgs = []
-		self.targets = []
+		self.target_imgs = []
 		self.outputs = []
 		self.model = model 
 		self.model_reset_func = model_reset_func
@@ -65,7 +65,7 @@ class BenchmarkTestCase():
 					exit() 
 
 			self.sat_imgs.append(sat_img)
-			self.targets.append(target_img[:,:,0])
+			self.target_imgs.append(target_img[:,:,0])
 
 
 	def _reset(self):
