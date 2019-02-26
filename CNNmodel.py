@@ -751,7 +751,7 @@ def buildMetaBlockV1(inputA, outputA, inputB, outputB, loss_func = CrossEntropy,
 
 	return task_losses, task_outputs, inner_output, loss, groupA_losses, max_grad
 
-def buildMetaBlockV1_old(inputA, outputA, inputB, outputB, loss_func = CrossEntropy, inner_lr = 0.01, inner_step = 5, stopgrad = True, decay = 0.9, layer_st = 10, layer_ed = 13, build_cnnmodel=None, run_cnnmodel=None, inputdim=3):
+def buildMetaBlockV1_old(inputA, outputA, inputB, outputB, loss_func = CrossEntropy, inner_lr = 0.01, inner_step = 5, stopgrad = True, decay = 0.9, layer_st = 10, layer_ed = 13, build_cnn_model = build_unet512_12_V1_fixed, run_cnn_model = run_unet512_12_V1_fixed, run_cnnmodel=None, inputdim=3):
 
 	#build_cnnmodel = build_unet512_10
 	#run_cnnmodel = run_unet512_10
@@ -759,10 +759,13 @@ def buildMetaBlockV1_old(inputA, outputA, inputB, outputB, loss_func = CrossEntr
 	#build_cnnmodel = build_unet512_12_V1
 	#run_cnnmodel = run_unet512_12_V1
 
-	if build_cnnmodel is None:
-		build_cnnmodel = build_unet512_12_V1_fixed
-		run_cnnmodel = run_unet512_12_V1_fixed
+	# if build_cnnmodel is None:
+	# 	build_cnnmodel = build_unet512_12_V1_fixed
+	# 	run_cnnmodel = run_unet512_12_V1_fixed
 
+
+	build_cnnmodel = build_cnn_model 
+	run_cnnmodel = run_cnn_model
 
 	task_losses = []
 	task_outputs = []
