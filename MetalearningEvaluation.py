@@ -253,7 +253,7 @@ class Benchmark():
 	def Evaluate(self):
 		result = [0]*3
 		for test_case in self.config['test_cases']:
-			test_case_object = BenchmarkTestCase(model, model_reset_func, self.config['folder']+test_case[0], number_of_image=test_case[1], train_iteration=self.train_iteration, train_lr = self.train_lr, name = test_case[0])
+			test_case_object = BenchmarkTestCase(self.model, self.model_reset_func, self.config['folder']+test_case[0], number_of_image=test_case[1], train_iteration=self.train_iteration, train_lr = self.train_lr, name = test_case[0])
 
 			iou, precision, recall = test_case_object.EvaluateOneShot()
 
