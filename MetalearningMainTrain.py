@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
 		print("Preload")
 		t0 = time()
-		dataloader.preload(100)
+		dataloader.preload(50)
 		print("Preload Done", time()-t0)
 
 
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 			
 			if step % 1000 == 0 and step != 0:
 				t0 = time()
-				dataloader.preload(200)
+				dataloader.preload(50)
 				print("Step ", step, "Preload Done", time()-t0)
 
 
