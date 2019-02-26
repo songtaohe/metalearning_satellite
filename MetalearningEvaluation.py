@@ -272,7 +272,7 @@ if __name__ == "__main__":
 	with tf.Session() as sess:
 		model = MAMLFirstOrder(sess)
 		model.restoreModel(args.model_recover)
-		model.meta_lr_val = 0.00001
+		model.meta_lr_val = 0.001
 
 		benchmark = Benchmark(model, lambda _: model.restoreModel(args.model_recover), train_iteration=80)  
 		benchmark.Evaluate()
