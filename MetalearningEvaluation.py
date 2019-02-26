@@ -185,7 +185,7 @@ class BenchmarkTestCase():
 		return sampler 
 
 
-	def _train(self, sampler = self._default_sampler()):
+	def _train(self, sampler):
 
 		for i in xrange(self.train_iteration+1):
 			example_inputA,example_targetA = sampler()
@@ -212,7 +212,7 @@ class BenchmarkTestCase():
 
 	def EvaluateOneShot(self): #use one example
 		self._reset() 
-		self._train() 
+		self._train(self._default_sampler()) 
 
 		result = [0] * 3 
 
