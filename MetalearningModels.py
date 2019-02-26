@@ -33,8 +33,8 @@ def CrossEntropy(a,b):
 
 class MAMLBase(object):
 	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001, meta_block = CNNmodel.buildMetaBlockV1, cnn_model = CNNmodel.build_unet512_12_V1, build_cnn_model = CNNmodel.build_unet512_12_V1_fixed, run_cnn_model = CNNmodel.run_unet512_12_V1_fixed, reuse=False):
+		#self.num_updates = 10
 		self.num_updates = 10
-		self.num_updates = 5
 		self.num_test_updates = 20
 		self.num_test_updates = num_test_updates
 		self.meta_lr_val = 0.001
@@ -143,7 +143,7 @@ class MAMLBase(object):
 		return self.sess.run([self.baseline_output, self.baseline_loss], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val})
 
 
-	def addLog(self, test_loss, train_loss, lr,g1,g2):
+	def addLog(self, test_loss, train_loss, lr,g1=0,g2=0):
 		return self.sess.run(self.merged_summary , feed_dict = {self.test_loss:test_loss, self.train_loss: train_loss, self.lr:lr, self.max_g1:g1, self.max_g2:g2})
 
 	def saveModel(self, path):

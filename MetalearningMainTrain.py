@@ -31,6 +31,10 @@ parser.add_argument('-r', action='store', dest='model_recover', type=str,
 parser.add_argument('-d', action='store', dest='data_folder', type=str,
                     help='dataset folder', default='/data/songtao/')
 
+parser.add_argument('-sample_output', action='store', dest='sample_output', type=str,
+                    help='sample_output', default='/data/songtao/sample/')
+
+
 
 parser.add_argument('-lr', action='store', dest='learning_rate', type=float,
                     help='dataset folder', default=0.00005)
@@ -49,8 +53,8 @@ if __name__ == "__main__":
 
 	Popen("mkdir -p %s" % name, shell=True).wait()
 
-	output_folder1 = name+"/e1/"
-	output_folder2 = name+"/e2/"
+	output_folder1 = args.sample_output + "/"+name+"/e1/"
+	output_folder2 = args.sample_output+ "/"+name+"/e2/"
 	model_folder = name+"/model/"
 	#log_folder = name+"/log"
 	log_folder = "alllogs/log"
@@ -115,13 +119,13 @@ if __name__ == "__main__":
 
 		while True:
 			
-			if step % 500 == 0 and step != 0:
+			if step % 1000 == 0 and step != 0:
 				t0 = time()
 				dataloader.preload(200)
 				print("Step ", step, "Preload Done", time()-t0)
 
 
-			iA,oA, iB, oB, task_id = dataloader.loadBatch(5,1,p=task_p)
+			iA,oA, iB, oB, task_id = dataloader.loadBatch(5,10,p=task_p)
 
 			ret = model.trainModel(iA,oA,iB,oB, 1.0)
 
@@ -170,7 +174,7 @@ if __name__ == "__main__":
 					train_loss = s/cc
 					longterm_loss += s/cc
 
-					if step % 400 == 0:
+					if step % 1000 == 0:
 						model.saveModel(model_folder+"/model%d"%step)
 
 				eeid = 0
@@ -183,7 +187,7 @@ if __name__ == "__main__":
 				# 	tmpTestCase = testCase[:test_num]
 
 
-				if step % 400 == 0 or step < 400:
+				if step % 1000 == 0 or step == 1:
 					test_loss = 0
 					#test_loss_first_two = 0
 
@@ -196,20 +200,26 @@ if __name__ == "__main__":
 						tmp_img2 = np.zeros((512,512), dtype=np.uint8)
 
 						# output input
-						for ind in xrange(len(testCases[0])):
-							tmp_img = (testCases[0][ind,:,:,:]*255).astype(np.uint8)
-							Image.fromarray(tmp_img).save(output_folder1+'img_%d_%d_sat.png' % (eeid, ind))
 
-							tmp_img2 = (testCases[1][ind,:,:,0]*255).astype(np.uint8)
-							Image.fromarray(tmp_img2).save(output_folder1+'img_%d_%d_target.png' % (eeid, ind))
+						if step == 1:
+
+							for ind in xrange(len(testCases[0])):
+								tmp_img = (testCases[0][ind,:,:,:]*255).astype(np.uint8)
+								Image.fromarray(tmp_img).save(output_folder1+'img_%d_%d_sat.png' % (eeid, ind))
+
+								tmp_img2 = (testCases[1][ind,:,:,0]*255).astype(np.uint8)
+								Image.fromarray(tmp_img2).save(output_folder1+'img_%d_%d_target.png' % (eeid, ind))
+
+							for ind in xrange(len(testCases[2])):
+								tmp_img = (testCases[2][ind,:,:,:]*255).astype(np.uint8)
+								Image.fromarray(tmp_img).save(output_folder1+'img_%d_%d_sat.png' % (eeid, ind+len(testCases[0])))
+
+								tmp_img2 = (testCases[3][ind,:,:,0]*255).astype(np.uint8)
+								Image.fromarray(tmp_img2).save(output_folder1+'img_%d_%d_target.png' % (eeid, ind+len(testCases[0])))
+
+
 
 						for ind in xrange(len(testCases[2])):
-							tmp_img = (testCases[2][ind,:,:,:]*255).astype(np.uint8)
-							Image.fromarray(tmp_img).save(output_folder1+'img_%d_%d_sat.png' % (eeid, ind+len(testCases[0])))
-
-							tmp_img2 = (testCases[3][ind,:,:,0]*255).astype(np.uint8)
-							Image.fromarray(tmp_img2).save(output_folder1+'img_%d_%d_target.png' % (eeid, ind+len(testCases[0])))
-
 							tmp_img2 = (result[ind,:,:,0]*255).astype(np.uint8)
 							Image.fromarray(tmp_img2).save(output_folder1+'img_%d_%d_output.png' % (eeid, ind+len(testCases[0])))
 
@@ -227,7 +237,6 @@ if __name__ == "__main__":
 				
 
 				if step % 5000 == 0:
-
 
 
 					print("longterm_loss",longterm_loss/5," lr is", model.meta_lr_val)
