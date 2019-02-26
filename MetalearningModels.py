@@ -76,14 +76,17 @@ class MAMLBase(object):
 
 		self.metatrain_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr).minimize(self.task_losses[self.num_updates-1])
 
-		self.opt = tf.train.AdamOptimizer(learning_rate=self.meta_lr)
-		grads = self.opt.compute_gradients(self.groupA_loss)
-		self.train_max_grad = 0
-		for grad in grads:
-			self.train_max_grad = tf.maximum(tf.reduce_max(tf.abs(grad)), self.train_max_grad)
+		# self.opt = tf.train.AdamOptimizer(learning_rate=self.meta_lr)
+		# grads = self.opt.compute_gradients(self.groupA_loss)
+		# self.train_max_grad = 0
+		# for grad in grads:
+		# 	self.train_max_grad = tf.maximum(tf.reduce_max(tf.abs(grad)), self.train_max_grad)
 
-		self.metatrain_groupA_op = self.opt.apply_gradients(grads) # normal sgd training 
-		#self.metatrain_groupA_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr).minimize(self.groupA_loss)
+		# self.metatrain_groupA_op = self.opt.apply_gradients(grads) # normal sgd training 
+
+
+
+		# #self.metatrain_groupA_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr).minimize(self.groupA_loss)
 
 
 
