@@ -78,8 +78,12 @@ if __name__ == "__main__":
 		logserver = Popen("tensorboard --logdir=%s"%log_folder, shell=True)
 
 
+		print("dataset folder", args.data_folder)
+
 		dataloader = MetalearningLoader.GetDataLoader(args.data_folder)
 		task_p = [1.0/len(dataloader.loaders) for x in xrange(len(dataloader.loaders))]
+
+		loaders = dataloader.loaders
 
 		print("Preload")
 		t0 = time()
