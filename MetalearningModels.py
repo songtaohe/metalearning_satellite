@@ -56,9 +56,9 @@ class MAMLBase(object):
 		self.outputB = tflearn.input_data(shape = [None, image_size, image_size, 1])
 
 		with tf.variable_scope("foo", reuse=reuse):
-			self.task_losses, self.task_outputs, _, self.groupA_loss,self.groupA_losses,self.max_grad = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_updates, inner_lr = self.inner_lr, build_cnn_model = build_unet512_12_V1_fixed, run_cnn_model = run_unet512_12_V1_fixed)
+			self.task_losses, self.task_outputs, _, self.groupA_loss,self.groupA_losses,self.max_grad = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_updates, inner_lr = self.inner_lr, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
 		with tf.variable_scope("foo", reuse=True):
-			self.task_losses_test, self.task_test_outputs, self.debug_inner_output, self.groupA_loss_test,_,_ = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_test_updates, inner_lr = self.inner_lr_test, layer_st = 10, layer_ed = 13, build_cnn_model = build_unet512_12_V1_fixed, run_cnn_model = run_unet512_12_V1_fixed)
+			self.task_losses_test, self.task_test_outputs, self.debug_inner_output, self.groupA_loss_test,_,_ = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_test_updates, inner_lr = self.inner_lr_test, layer_st = 10, layer_ed = 13, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
 
 
 		with tf.variable_scope("foo", reuse=True):
