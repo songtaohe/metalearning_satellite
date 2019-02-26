@@ -140,45 +140,45 @@ class BenchmarkTestCase():
 		def sampler():
 			example_inputA = np.zeros((example_sample, 512,512,3))
 			example_targetA = np.zeros((example_sample, 512, 512, 1))
+			for i in xrange(example_sample):
+				while True:
+					img_id = np.random.choice(img_ids)
+					example_sat = self.sat_imgs[img_id]
+					example_target = self.target_imgs[img_id]
 
-			while True:
-				img_id = np.random.choice(img_ids)
-				example_sat = self.sat_imgs[img_id]
-				example_target = self.target_imgs[img_id]
+					x = random.randint(0, np.shape(example_sat)[0] - 512)
+					y = random.randint(0, np.shape(example_sat)[1] - 512)
 
-				x = random.randint(0, np.shape(example_sat)[0] - 512)
-				y = random.randint(0, np.shape(example_sat)[1] - 512)
+					example_inputA_crop = np.copy(example_sat[x:x+512,y:y+512,0:3])
+					example_targetA_crop = np.copy(example_target[x:x+512,y:y+512])
 
-				example_inputA_crop = np.copy(example_sat[x:x+512,y:y+512,0:3])
-				example_targetA_crop = np.copy(example_target[x:x+512,y:y+512])
+					t = random.randint(0,4)
+					
+					if t == 1:
+						example_inputA_crop = np.flipud(example_inputA_crop)
+						example_targetA_crop = np.flipud(example_targetA_crop)
 
-				t = random.randint(0,4)
-				
-				if t == 1:
-					example_inputA_crop = np.flipud(example_inputA_crop)
-					example_targetA_crop = np.flipud(example_targetA_crop)
+					if t == 2:
+						example_inputA_crop  = np.fliplr(example_inputA_crop)
+						example_targetA_crop = np.fliplr(example_targetA_crop)
 
-				if t == 2:
-					example_inputA_crop  = np.fliplr(example_inputA_crop)
-					example_targetA_crop = np.fliplr(example_targetA_crop)
+					if t == 3:
+						example_inputA_crop  = np.rot90(example_inputA_crop,k=1,axes=[0,1])
+						example_targetA_crop = np.rot90(example_targetA_crop,k=1,axes=[0,1])
 
-				if t == 3:
-					example_inputA_crop  = np.rot90(example_inputA_crop,k=1,axes=[0,1])
-					example_targetA_crop = np.rot90(example_targetA_crop,k=1,axes=[0,1])
+					if t == 4:
+						example_inputA_crop  = np.rot90(example_inputA_crop ,k=3,axes=[0,1])
+						example_targetA_crop = np.rot90(example_targetA_crop,k=3,axes=[0,1])
 
-				if t == 4:
-					example_inputA_crop  = np.rot90(example_inputA_crop ,k=3,axes=[0,1])
-					example_targetA_crop = np.rot90(example_targetA_crop,k=3,axes=[0,1])
+					example_inputA[i, :,:,:] = example_inputA_crop
+					example_targetA[i,:,:,0] = example_targetA_crop
 
-				example_inputA[i, :,:,:] = example_inputA_crop
-				example_targetA[i,:,:,0] = example_targetA_crop
+					if np.sum(example_targetA_crop)>5.0 or i>example_sample*0.6 :
+						break
 
-				if np.sum(example_targetA_crop)>5.0 or i>example_sample*0.6 :
-					break
-
-				cc = cc + 1
-				if cc > 10:
-					break
+					cc = cc + 1
+					if cc > 10:
+						break
 
 			return example_inputA, example_targetA
 
