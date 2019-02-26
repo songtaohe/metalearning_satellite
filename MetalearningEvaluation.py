@@ -191,8 +191,8 @@ class BenchmarkTestCase():
 			example_inputA,example_targetA = sampler()
 			_, loss = self.model.trainBaselineModel(example_inputA,example_targetA)
 
-			if i % 10 == 0:
-				print(loss)
+			#if i % 10 == 0:
+			print(loss)
 
 
 	def _metric(self, output, target, threshold = 0.5):
