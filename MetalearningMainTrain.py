@@ -3,6 +3,13 @@ import argparse
 from MetalearningModels import MAMLFirstOrder
 import MetalearningLoader 
 from time import time 
+from subprocess import Popen
+import random
+import scipy
+from PIL import Image
+import os, datetime
+import numpy as np
+
 
 
 parser = argparse.ArgumentParser()
@@ -34,11 +41,6 @@ parser.add_argument('-lr', action='store', dest='learning_rate', type=float,
 args = parser.parse_args()
 
 print(args)
-
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -89,7 +91,6 @@ if __name__ == "__main__":
 		testCase = [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		print("Sample Test Data Done", time()-t0)
-
 
 
 		step = 0
