@@ -399,9 +399,9 @@ class DataLoaderMultiplyTask(object):
 
 			if np.shape(sat)[0] != self.imagesize:
 				sat = scipy.misc.imresize(sat, (self.imagesize, self.imagesize))
-				target = scipy.misc.imresize(target, (self.imagesize, self.imagesize))
+				target = scipy.misc.imresize(target.reshape((np.shape(target)[0], np.shape(target)[1])), (self.imagesize, self.imagesize))
 
-			new_output.append((sat, target))
+			new_output.append((sat, target.reshape(self.imagesize, self.imagesize, 1)))
 
 
 		return new_output
