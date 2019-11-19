@@ -198,6 +198,8 @@ if __name__ == "__main__":
 					#test_loss_first_two = 0
 
 					eeid = 0
+					print("Evaluation on ", len(testCase), "test cases")
+					tt0 = time()
 					for testCases in testCase:
 
 						result, result_loss, _ = model.runModel(testCases[0],testCases[1],testCases[2], testCases[3])
@@ -233,7 +235,9 @@ if __name__ == "__main__":
 						eeid += 1
 
 					test_loss/=eeid
-				
+
+					print("Evaluation on ", len(testCase), "test cases done, time:", time(0) - tt0)
+					
 
 				print("test_loss", test_loss)
 
