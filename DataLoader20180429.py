@@ -414,7 +414,7 @@ class DataLoaderMultiplyTask(object):
 
 			random_scale = random.choice([0.5, 0.75, 1.0, 1.5, 2.0])
 
-			self.preloadData.append(data_argumentation_and_scale(self.loaders[i].load(num_per_task,int(self.imagesize * random_scale))))
+			self.preloadData.append(self.data_argumentation_and_scale(self.loaders[i].load(num_per_task,int(self.imagesize * random_scale))))
 
 	def preload_detail(self, num_per_task):
 		self.preloadData = []
@@ -423,7 +423,7 @@ class DataLoaderMultiplyTask(object):
 			
 			random_scale = random.choice([0.5, 0.75, 1.0, 1.5, 2.0])
 
-			self.preloadData.append(data_argumentation_and_scale(self.loaders[i].load(num_per_task[i],int(self.imagesize * random_scale))))
+			self.preloadData.append(self.data_argumentation_and_scale(self.loaders[i].load(num_per_task[i],int(self.imagesize * random_scale))))
 
 
 	def loadBatchFromTask(self, taskid, sizeA=5, sizeB=10):

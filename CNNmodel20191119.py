@@ -98,7 +98,7 @@ def forward_conv_layer(name, input_tensor, in_channels, out_channels, is_trainin
 	if batchnorm:
 		try:
 			n = batch_norm(s, reuse = True, scope= "scope"+name, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
-			print("batch norm reuse!")
+			print("batch norm reuse!",name)
 		except:
 			n = batch_norm(s, reuse = False, scope= "scope"+name, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
 	else:
