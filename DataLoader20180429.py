@@ -389,13 +389,13 @@ class DataLoaderMultiplyTask(object):
 			sat = pair[0]
 			target = pair[1]
 
-			sat[:,:,0] = sat[:,:,0] * (random.random()*0.4 + 0.8)
-			sat[:,:,1] = sat[:,:,1] * (random.random()*0.4 + 0.8)
-			sat[:,:,2] = sat[:,:,2] * (random.random()*0.4 + 0.8)
+			sat[:,:,0] = sat[:,:,0] * (random.random()*0.2 + 0.9)
+			sat[:,:,1] = sat[:,:,1] * (random.random()*0.2 + 0.9)
+			sat[:,:,2] = sat[:,:,2] * (random.random()*0.2 + 0.9)
 
-			sat = sat * (random.random()*0.3 + 0.9) - random.random() * 0.1
+			sat = sat + random.random()*0.2-0.1 
 
-			sat = np.clip(sat, 0.0, 1.0)
+			sat = np.clip(sat, 0.0, 255.0/257.0)
 
 			if np.shape(sat)[0] != self.imagesize:
 				sat = scipy.misc.imresize(sat, (self.imagesize, self.imagesize))

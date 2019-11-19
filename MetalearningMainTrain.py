@@ -104,7 +104,7 @@ if __name__ == "__main__":
 		testCase = [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
-		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
+		#testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		print("Sample Test Data Done", time()-t0)
 
 		step = 0
