@@ -54,7 +54,12 @@ def create_conv_layer(name, input_tensor, in_channels, out_channels, is_training
 		s = s + add 
 
 	if batchnorm:
-		n = batch_norm(s, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
+		try:
+			n = batch_norm(s, reuse = True, scope= "scope"+name, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
+			print("batch norm reuse!")
+		except:
+			n = batch_norm(s, reuse = False, scope= "scope"+name, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
+		
 	else:
 		n = s 
 
@@ -87,14 +92,15 @@ def forward_conv_layer(name, input_tensor, in_channels, out_channels, is_trainin
 		
 		s = tf.nn.bias_add(t, biases)
 
-
-
-
 	if add is not None: # res
 		s = s + add 
 
 	if batchnorm:
-		n = batch_norm(s, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
+		try:
+			n = batch_norm(s, reuse = True, scope= "scope"+name, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
+			print("batch norm reuse!")
+		except:
+			n = batch_norm(s, reuse = False, scope= "scope"+name, decay = 0.99, center=True, scale=True, updates_collections=None, is_training=is_training)
 	else:
 		n = s 
 
