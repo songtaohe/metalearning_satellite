@@ -10,6 +10,7 @@ import scipy
 from time import time,sleep
 import sys
 import CNNmodel
+import CNNmodel20191119 
 from subprocess import Popen
 import inputFilter 
 
@@ -50,9 +51,14 @@ class MAMLBase(object):
 
 		self.sess = sess
 
-		self.inputA = tflearn.input_data(shape = [None, image_size, image_size, 3])
+		self._inputA = tflearn.input_data(shape = [None, image_size, image_size, 3])
+		self.inputA = self._inputA - 0.5 
+
 		self.outputA = tflearn.input_data(shape = [None, image_size, image_size, 1])
-		self.inputB = tflearn.input_data(shape = [None, image_size, image_size, 3])
+
+		self._inputB = tflearn.input_data(shape = [None, image_size, image_size, 3])
+		self.inputB = self._inputB - 0.5 
+
 		self.outputB = tflearn.input_data(shape = [None, image_size, image_size, 1])
 
 		with tf.variable_scope("foo", reuse=reuse):
@@ -60,15 +66,12 @@ class MAMLBase(object):
 		with tf.variable_scope("foo", reuse=True):
 			self.task_losses_test, self.task_test_outputs, self.debug_inner_output, self.groupA_loss_test,_,_ = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_test_updates, inner_lr = self.inner_lr_test, layer_st = 10, layer_ed = 13, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
 
-
 		with tf.variable_scope("foo", reuse=True):
 			self.baseline_output_, _ = cnn_model(self.inputA, prefix="first_", deconv=True)
 
 		self.baseline_output = tf.nn.softmax(self.baseline_output_)
 		self.baseline_loss = CrossEntropy(self.baseline_output_, self.outputA)
 		self.baseline_train_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr, beta1 = 0.1, beta2 = 0.1).minimize(self.baseline_loss)
-
-
 
 		# optimizer = tf.train.AdamOptimizer(self.meta_lr)
 		# self.gvs = gvs = optimizer.compute_gradients(self.task_losses[self.num_updates-1])
@@ -123,27 +126,27 @@ class MAMLBase(object):
 
 	def trainModel(self, inputA, outputA, inputB, outputB, scale = 1.0):
 
-		return self.sess.run([self.metatrain_op, self.task_losses[self.num_updates-1]] + self.task_losses, feed_dict = {self.inputA:inputA, self.outputA:outputA, self.inputB:inputB, self.outputB:outputB, self.meta_lr:self.meta_lr_val * scale})
+		return self.sess.run([self.metatrain_op, self.task_losses[self.num_updates-1]] + self.task_losses, feed_dict = {self._inputA:inputA, self.outputA:outputA, self._inputB:inputB, self.outputB:outputB, self.meta_lr:self.meta_lr_val * scale})
 
 	def trainModelGroupA(self, inputA, outputA, scale = 1.0):
 
-		return self.sess.run([self.train_max_grad,self.max_grad]+[self.metatrain_groupA_op, self.groupA_loss] + self.groupA_losses, feed_dict = {self.inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
+		return self.sess.run([self.train_max_grad,self.max_grad]+[self.metatrain_groupA_op, self.groupA_loss] + self.groupA_losses, feed_dict = {self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
 
 	# def runModel(self, inputA, outputA, inputB):
 	# 	return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.inputB:inputB,self.meta_lr:self.meta_lr_val})
 
 	def runModel(self, inputA, outputA, inputB, outputB):
-		return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.task_losses_test[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.inputB:inputB,self.outputB:outputB, self.meta_lr:self.meta_lr_val})
+		return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.task_losses_test[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self._inputA:inputA, self.outputA:outputA, self._inputB:inputB,self.outputB:outputB, self.meta_lr:self.meta_lr_val})
 
 	def trainBaselineModel(self, inputA, outputA, scale = 1.0):
 
-		return self.sess.run([self.baseline_train_op, self.baseline_loss], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
+		return self.sess.run([self.baseline_train_op, self.baseline_loss], feed_dict = {self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
 
 	# def runModel(self, inputA, outputA, inputB):
 	# 	return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.inputB:inputB,self.meta_lr:self.meta_lr_val})
 
 	def runBaselineModel(self, inputA, outputA):
-		return self.sess.run([self.baseline_output, self.baseline_loss], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val})
+		return self.sess.run([self.baseline_output, self.baseline_loss], feed_dict = {self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val})
 
 
 	def addLog(self, test_loss, train_loss, lr,g1=0,g2=0):
@@ -164,6 +167,11 @@ class MAMLFirstOrder(MAMLBase):
 class MAMLFirstOrderMultiResolution(MAMLBase):
 	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):
 		super(MAMLFirstOrderMultiResolution, self).__init__(sess, num_test_updates, inner_lr, CNNmodel.buildMetaBlockV1, CNNmodel.build_unet512_12_V1, build_cnn_model = CNNmodel.build_unet512_12_V1_fixed, run_cnn_model = CNNmodel.run_unet512_12_V1_fixed)
+
+
+class MAMLFirstOrder20191119(MAMLBase):
+	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):
+		super(MAMLFirstOrder20191119, self).__init__(sess, num_test_updates, inner_lr, meta_block = CNNmodel20191119.buildMetaBlockV2_20191119, cnn_model=CNNmodel20191119.build_unet_16_V2_20191119, build_cnn_model = CNNmodel20191119.build_unet_16_V2_20191119, run_cnn_model = CNNmodel20191119.run_unet_16_V2_20191119)
 
 
 

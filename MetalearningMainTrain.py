@@ -1,6 +1,6 @@
 import argparse
 
-from MetalearningModels import MAMLFirstOrder
+from MetalearningModels import MAMLFirstOrder20191119
 import MetalearningLoader 
 from time import time,sleep
 from subprocess import Popen
@@ -10,6 +10,8 @@ from PIL import Image
 import os, datetime
 import numpy as np
 import tensorflow as tf
+
+
 
 
 parser = argparse.ArgumentParser()
@@ -34,10 +36,12 @@ parser.add_argument('-d', action='store', dest='data_folder', type=str,
 parser.add_argument('-sample_output', action='store', dest='sample_output', type=str,
                     help='sample_output', default='/data/songtao/sample/')
 
+parser.add_argument('-imagesize', action='store', dest='imagesize', type=int,
+                    help='imagesize', default=256)
 
 
 parser.add_argument('-lr', action='store', dest='learning_rate', type=float,
-                    help='dataset folder', default=0.00005)
+                    help='dataset folder', default=0.0001)
 
 # inner_lr = 0.001 
 # inner_lr_testing = 0.001 
@@ -46,6 +50,7 @@ args = parser.parse_args()
 
 print(args)
 
+imagesize = args.imagesize 
 
 if __name__ == "__main__":
 	name = args.model_save_name
@@ -69,7 +74,7 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 
-		model = MAMLFirstOrder(sess)
+		model = MAMLFirstOrder20191119(sess)
 		model.meta_lr_val = args.learning_rate
 
 		if args.model_recover is not None:
@@ -98,8 +103,9 @@ if __name__ == "__main__":
 		t0 = time()
 		testCase = [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
+		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
+		testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		print("Sample Test Data Done", time()-t0)
-
 
 		step = 0
 
@@ -196,8 +202,8 @@ if __name__ == "__main__":
 
 						result, result_loss, _ = model.runModel(testCases[0],testCases[1],testCases[2], testCases[3])
 
-						tmp_img = np.zeros((512,512,3), dtype=np.uint8)
-						tmp_img2 = np.zeros((512,512), dtype=np.uint8)
+						tmp_img = np.zeros((imagesize,imagesize,3), dtype=np.uint8)
+						tmp_img2 = np.zeros((imagesize,imagesize), dtype=np.uint8)
 
 						# output input
 

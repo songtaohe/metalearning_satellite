@@ -93,14 +93,17 @@ def FastSample(mask_img, crop_size, num = 5, force_positive=False):
 #class Loader(object):
 # Implement data loader for different tasks 
 class LoaderOSM(object):
-	def __init__ (self, folders, region_n = 36, subtask=0):
+	def __init__ (self, folders, region_n = 36, subtask=0, scale=1.0):
 		# 2 is road
 		# 4 is building 
 		self.taskid = subtask
 		self.folders = folders
 		self.region_n = region_n
+		self.scale = scale 
 
 	def load(self, n, imagesize, p_ratio = 0.8, sample_per_region=10):
+
+		#imagesize = imagesize * scale 
 
 		batch_n = n/sample_per_region
 		output = []
@@ -149,12 +152,13 @@ class LoaderOSM(object):
 		return output
 
 class LoaderKaggleDSTL(object):
-	def __init__ (self, folder, subtask=0): 
+	def __init__ (self, folder, subtask=0, scale=1.0): 
 		self.folder = folder
 		self.taskid = subtask
 		filelist = os.listdir(self.folder)
 
 		self.filelist = []
+		self.scale = scale 
 
 		for f in filelist:
 			if f.endswith("sat.png"):
@@ -207,9 +211,10 @@ class LoaderKaggleDSTL(object):
 		return output	
 
 class LoaderCVPRContestLandCover(object):
-	def __init__ (self, folder, subtask=0):
+	def __init__ (self, folder, subtask=0, scale = 1.0):
 		self.taskid = subtask
 		self.folder = folder
+		self.scale = scale
 
 		filelist = os.listdir(self.folder)
 
@@ -308,12 +313,14 @@ class LoaderCVPRContestLandCover(object):
 		return output
 
 class LoaderCVPRContestRoadDetection(object):
-	def __init__ (self, folder):
+	def __init__ (self, folder, scale=1.0):
 		self.folder = folder
 
 		filelist = os.listdir(self.folder)
 
 		self.filelist = []
+
+		self.scale = scale
 
 		for f in filelist:
 			if f.endswith("sat.jpg"):
@@ -374,17 +381,49 @@ class DataLoaderMultiplyTask(object):
 		self.tid = 0 
 		self.cc = 0
 
+
+
+	def data_argumentation_and_scale(self, output):
+		new_output = []
+		for pair in output:
+			sat = pair[0]
+			target = pair[1]
+
+			sat[:,:,0] = sat[:,:,0] * (random.random()*0.4 + 0.8)
+			sat[:,:,1] = sat[:,:,1] * (random.random()*0.4 + 0.8)
+			sat[:,:,2] = sat[:,:,2] * (random.random()*0.4 + 0.8)
+
+			sat = sat * (random.random()*0.3 + 0.9) - random.random() * 0.1
+
+			sat = np.clip(sat, 0.0, 1.0)
+
+			if np.shape(sat)[0] != self.imagesize:
+				sat = scipy.misc.imresize(sat, (self.imagesize, self.imagesize))
+				target = scipy.misc.imresize(target, (self.imagesize, self.imagesize))
+
+			new_output.append((sat, target))
+
+
+		return new_output
+
+
 	def preload(self, num_per_task=100):
 		self.preloadData = []
 
 		for i in xrange(len(self.loaders)):
-			self.preloadData.append(self.loaders[i].load(num_per_task,self.imagesize))
+
+			random_scale = random.choice([0.5, 0.75, 1.0, 1.5, 2.0])
+
+			self.preloadData.append(data_argumentation_and_scale(self.loaders[i].load(num_per_task,int(self.imagesize * random_scale))))
 
 	def preload_detail(self, num_per_task):
 		self.preloadData = []
 
 		for i in xrange(len(self.loaders)):
-			self.preloadData.append(self.loaders[i].load(num_per_task[i],self.imagesize))
+			
+			random_scale = random.choice([0.5, 0.75, 1.0, 1.5, 2.0])
+
+			self.preloadData.append(data_argumentation_and_scale(self.loaders[i].load(num_per_task[i],int(self.imagesize * random_scale))))
 
 
 	def loadBatchFromTask(self, taskid, sizeA=5, sizeB=10):

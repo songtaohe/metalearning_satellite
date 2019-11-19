@@ -1,7 +1,7 @@
 import DataLoader20180429 as MainDataLoader
 
 
-def GetDataLoader(folder = "/data/songtao/"):
+def GetDataLoader(folder = "/data/songtao/", imagesize = 256):
 
 	OSM_folder = [folder+'metalearning/dataset/global/boston/',folder+'metalearning/dataset/global/chicago/',folder+'metalearning/dataset/global/la/']
 
@@ -21,7 +21,7 @@ def GetDataLoader(folder = "/data/songtao/"):
 
 	loaders = [loaderOSMroad,loaderOSMBuilding,loaderDeepGlobalLand0,loaderDeepGlobalLand1,loaderDeepGlobalLand2,loaderDeepGlobalLand3,loaderDeepGlobalLand4,loaderDeepGlobalLand5,loaderDeepGlobalRoadDetection] + loaderDSTLs
 
-	dataloader = MainDataLoader.DataLoaderMultiplyTask(loaders)	
+	dataloader = MainDataLoader.DataLoaderMultiplyTask(loaders, imagesize=imagesize)	
 
 
 
