@@ -192,7 +192,7 @@ def CrossEntropy(a,b):
 
 
 # only tune the last 5 layers...   a small U-net + 5 more layers...  only update the last 5 layers
-def buildMetaBlockV2_20191119(inputA, outputA, inputB, outputB, loss_func = CrossEntropy, inner_lr = 0.01, inner_step = 5, stopgrad = True, decay = 0.9, layer_st = 10, layer_ed = 13, build_cnn_model = build_unet_16_V2_20191119, run_cnn_model = run_unet_16_V2_20191119, inputdim=3):
+def buildMetaBlockV2_20191119(inputA, outputA, inputB, outputB, training = True, loss_func = CrossEntropy, inner_lr = 0.01, inner_step = 5, stopgrad = True, decay = 0.9, layer_st = 10, layer_ed = 13, build_cnn_model = build_unet_16_V2_20191119, run_cnn_model = run_unet_16_V2_20191119, inputdim=3):
 
 	#build_cnnmodel = build_unet512_10
 	#run_cnnmodel = run_unet512_10
@@ -213,12 +213,12 @@ def buildMetaBlockV2_20191119(inputA, outputA, inputB, outputB, loss_func = Cros
 
 	groupA_losses = []
 
-	inner_output, weights = build_cnnmodel(inputA, prefix="first_", deconv=True,inputdim=inputdim)
+	inner_output, weights = build_cnnmodel(inputA, prefix="first_",inputdim=inputdim, training = training)
 
 	subset_weights = {}
 	layer_st = 12
 	layer_ed = 17
-	 
+
 	for l in xrange(layer_st,layer_ed):
 		subset_weights['w'+str(l)] = weights['w'+str(l)]
 		subset_weights['b'+str(l)] = weights['b'+str(l)]

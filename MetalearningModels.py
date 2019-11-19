@@ -45,6 +45,8 @@ class MAMLBase(object):
 
 		self.meta_lr = tf.placeholder(tf.float32, shape=[])
 
+		self.is_training = tf.placeholder(tf.bool)
+
 		self.inner_lr = self.meta_lr * 10 
 		self.inner_lr = 0.001
 		self.inner_lr_test = 0.001
@@ -62,12 +64,12 @@ class MAMLBase(object):
 		self.outputB = tflearn.input_data(shape = [None, image_size, image_size, 1])
 
 		with tf.variable_scope("foo", reuse=reuse):
-			self.task_losses, self.task_outputs, _, self.groupA_loss,self.groupA_losses,self.max_grad = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_updates, inner_lr = self.inner_lr, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
+			self.task_losses, self.task_outputs, _, self.groupA_loss,self.groupA_losses,self.max_grad = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, training = self.is_training,  inner_step = self.num_updates, inner_lr = self.inner_lr, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
 		with tf.variable_scope("foo", reuse=True):
-			self.task_losses_test, self.task_test_outputs, self.debug_inner_output, self.groupA_loss_test,_,_ = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, inner_step = self.num_test_updates, inner_lr = self.inner_lr_test, layer_st = 10, layer_ed = 13, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
+			self.task_losses_test, self.task_test_outputs, self.debug_inner_output, self.groupA_loss_test,_,_ = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, training = self.is_training, inner_step = self.num_test_updates, inner_lr = self.inner_lr_test, layer_st = 10, layer_ed = 13, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
 
 		with tf.variable_scope("foo", reuse=True):
-			self.baseline_output_, _ = cnn_model(self.inputA, prefix="first_", deconv=True)
+			self.baseline_output_, _ = cnn_model(self.inputA, prefix="first_", training = self.is_training)
 
 		self.baseline_output = tf.nn.softmax(self.baseline_output_)
 		self.baseline_loss = CrossEntropy(self.baseline_output_, self.outputA)
@@ -126,27 +128,27 @@ class MAMLBase(object):
 
 	def trainModel(self, inputA, outputA, inputB, outputB, scale = 1.0):
 
-		return self.sess.run([self.metatrain_op, self.task_losses[self.num_updates-1]] + self.task_losses, feed_dict = {self._inputA:inputA, self.outputA:outputA, self._inputB:inputB, self.outputB:outputB, self.meta_lr:self.meta_lr_val * scale})
+		return self.sess.run([self.metatrain_op, self.task_losses[self.num_updates-1]] + self.task_losses, feed_dict = {self.is_training:True, self._inputA:inputA, self.outputA:outputA, self._inputB:inputB, self.outputB:outputB, self.meta_lr:self.meta_lr_val * scale})
 
 	def trainModelGroupA(self, inputA, outputA, scale = 1.0):
 
-		return self.sess.run([self.train_max_grad,self.max_grad]+[self.metatrain_groupA_op, self.groupA_loss] + self.groupA_losses, feed_dict = {self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
+		return self.sess.run([self.train_max_grad,self.max_grad]+[self.metatrain_groupA_op, self.groupA_loss] + self.groupA_losses, feed_dict = {self.is_training:True, self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
 
 	# def runModel(self, inputA, outputA, inputB):
 	# 	return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.inputB:inputB,self.meta_lr:self.meta_lr_val})
 
 	def runModel(self, inputA, outputA, inputB, outputB):
-		return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.task_losses_test[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self._inputA:inputA, self.outputA:outputA, self._inputB:inputB,self.outputB:outputB, self.meta_lr:self.meta_lr_val})
+		return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.task_losses_test[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self.is_training:False, self._inputA:inputA, self.outputA:outputA, self._inputB:inputB,self.outputB:outputB, self.meta_lr:self.meta_lr_val})
 
 	def trainBaselineModel(self, inputA, outputA, scale = 1.0):
 
-		return self.sess.run([self.baseline_train_op, self.baseline_loss], feed_dict = {self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
+		return self.sess.run([self.baseline_train_op, self.baseline_loss], feed_dict = {self.is_training:True,self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val * scale})
 
 	# def runModel(self, inputA, outputA, inputB):
 	# 	return self.sess.run([self.task_test_outputs[self.num_test_updates-1], self.debug_inner_output], feed_dict = {self.inputA:inputA, self.outputA:outputA, self.inputB:inputB,self.meta_lr:self.meta_lr_val})
 
 	def runBaselineModel(self, inputA, outputA):
-		return self.sess.run([self.baseline_output, self.baseline_loss], feed_dict = {self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val})
+		return self.sess.run([self.baseline_output, self.baseline_loss], feed_dict = {self.is_training:False,self._inputA:inputA, self.outputA:outputA, self.meta_lr:self.meta_lr_val})
 
 
 	def addLog(self, test_loss, train_loss, lr,g1=0,g2=0):
