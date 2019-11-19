@@ -69,7 +69,7 @@ class MAMLBase(object):
 			self.task_losses_test, self.task_test_outputs, self.debug_inner_output, self.groupA_loss_test,_,_ = meta_block(self.inputA, self.outputA, self.inputB, self.outputB, training = self.is_training, inner_step = self.num_test_updates, inner_lr = self.inner_lr_test, layer_st = 10, layer_ed = 13, build_cnn_model = build_cnn_model, run_cnn_model = run_cnn_model)
 
 		with tf.variable_scope("foo", reuse=True):
-			self.baseline_output_, _ = cnn_model(self.inputA, prefix="first_", training = self.is_training)
+			self.baseline_output_, _ = cnn_model(self.inputA, prefix="first_", is_training = self.is_training)
 
 		self.baseline_output = tf.nn.softmax(self.baseline_output_)
 		self.baseline_loss = CrossEntropy(self.baseline_output_, self.outputA)
