@@ -236,8 +236,8 @@ if __name__ == "__main__":
 
 					test_loss/=eeid
 
-					print("Evaluation on ", len(testCase), "test cases done, time:", time(0) - tt0)
-					
+					print("Evaluation on ", len(testCase), "test cases done, time:", time() - tt0)
+
 
 				print("test_loss", test_loss)
 
