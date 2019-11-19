@@ -213,7 +213,7 @@ def buildMetaBlockV2_20191119(inputA, outputA, inputB, outputB, training = True,
 
 	groupA_losses = []
 
-	inner_output, weights = build_cnnmodel(inputA, prefix="first_",inputdim=inputdim, training = training)
+	inner_output, weights = build_cnnmodel(inputA, prefix="first_",inputdim=inputdim, is_training = training)
 
 	subset_weights = {}
 	layer_st = 12
@@ -247,7 +247,7 @@ def buildMetaBlockV2_20191119(inputA, outputA, inputB, outputB, training = True,
 			fast_weights[k] = weights[k]
 
 
-	output1 = run_cnnmodel(inputB, fast_weights,inputdim=inputdim)
+	output1 = run_cnnmodel(inputB, fast_weights,inputdim=inputdim, is_training=training)
 	#print(output1)
 	task_outputs.append(tf.nn.softmax(output1))
 	loss1 = loss_func(output1, outputB)
