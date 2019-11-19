@@ -401,6 +401,11 @@ class DataLoaderMultiplyTask(object):
 				sat = scipy.misc.imresize(sat, (self.imagesize, self.imagesize))
 				target = scipy.misc.imresize(target.reshape((np.shape(target)[0], np.shape(target)[1])), (self.imagesize, self.imagesize))
 
+
+				target[np.where(target>0.5)] = 1.0 
+				target[np.where(target<0.6)] = 0.0 
+
+
 			new_output.append((sat, target.reshape(self.imagesize, self.imagesize, 1)))
 
 
@@ -413,7 +418,7 @@ class DataLoaderMultiplyTask(object):
 		for i in xrange(len(self.loaders)):
 
 			random_scale = random.choice([0.5, 0.75, 1.0, 1.5, 2.0])
-			random_scale = 1.0 
+			#random_scale = 1.0 
 
 			self.preloadData.append(self.data_argumentation_and_scale(self.loaders[i].load(num_per_task,int(self.imagesize * random_scale))))
 
@@ -423,8 +428,8 @@ class DataLoaderMultiplyTask(object):
 		for i in xrange(len(self.loaders)):
 			
 			random_scale = random.choice([0.5, 0.75, 1.0, 1.5, 2.0])
-			random_scale = 1.0 
-			
+			#random_scale = 1.0 
+
 			self.preloadData.append(self.data_argumentation_and_scale(self.loaders[i].load(num_per_task[i],int(self.imagesize * random_scale))))
 
 
