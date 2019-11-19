@@ -12,7 +12,7 @@ from time import time, sleep
 from subprocess import Popen
 import scipy.ndimage as nd
 import json
-from PIL import ImageFont
+from PIL import ImageFontRBD_no_node_drop
 from PIL import ImageDraw
 import math
 

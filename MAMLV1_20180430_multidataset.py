@@ -35,9 +35,6 @@ def sigmoid_weighted(color_intensity, color_central = 74, color_scale = 0.1):
 
 
 
-
-
-
 def L2Loss(a,b):
 	return tf.reduce_mean(tf.multiply(tf.square(a-b),b+0.1)) 
 
