@@ -401,9 +401,10 @@ class DataLoaderMultiplyTask(object):
 				sat = (sat*255.0).astype(np.uint8)
 				sat = scipy.misc.imresize(sat, (self.imagesize, self.imagesize))
 				sat = sat.astype(np.float) / 255.0 
-				
-				target = scipy.misc.imresize(target.reshape((np.shape(target)[0], np.shape(target)[1])), (self.imagesize, self.imagesize))
 
+				target = (target*255.0).astype(np.uint8)
+				target = scipy.misc.imresize(target.reshape((np.shape(target)[0], np.shape(target)[1])), (self.imagesize, self.imagesize))
+				target = target.astype(np.float) / 255.0
 
 				target[np.where(target>0.5)] = 1.0 
 				target[np.where(target<0.6)] = 0.0 

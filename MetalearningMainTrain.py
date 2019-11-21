@@ -43,6 +43,9 @@ parser.add_argument('-imagesize', action='store', dest='imagesize', type=int,
 parser.add_argument('-lr', action='store', dest='learning_rate', type=float,
                     help='dataset folder', default=0.0001)
 
+parser.add_argument('-step', action='store', dest='step', type=int,
+                    help='initial step size', default=0)
+
 # inner_lr = 0.001 
 # inner_lr_testing = 0.001 
 
@@ -107,7 +110,7 @@ if __name__ == "__main__":
 		#testCase += [dataloader.loadBatchFromTask(i,5,10) for i in xrange(len(loaders))]
 		print("Sample Test Data Done", time()-t0)
 
-		step = 0
+		step = args.step
 
 		losses = {}
 		loss_curves = {}
