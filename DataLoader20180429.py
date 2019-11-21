@@ -398,6 +398,12 @@ class DataLoaderMultiplyTask(object):
 			sat = np.clip(sat, 0.0, 255.0/257.0)
 
 			if np.shape(sat)[0] != self.imagesize:
+
+				if np.shape(sat)[0] != np.shape(target)[0]:
+					print("Fatal Error")
+					print(np.shape(sat), np.shape(target))
+					exit()
+
 				sat = (sat*255.0).astype(np.uint8)
 				sat = scipy.misc.imresize(sat, (self.imagesize, self.imagesize))
 				sat = sat.astype(np.float) / 255.0 

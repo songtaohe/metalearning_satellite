@@ -101,10 +101,6 @@ class MAMLBase(object):
 		self.sess.run(tf.global_variables_initializer())
 		self.saver = tf.train.Saver(max_to_keep=100)
 
-
-
-
-
 		self.summary_loss = []
 		self.test_loss =  tf.placeholder(tf.float32)
 		self.train_loss =  tf.placeholder(tf.float32)

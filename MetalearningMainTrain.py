@@ -184,7 +184,8 @@ if __name__ == "__main__":
 					longterm_loss += s/cc
 
 					if step % 1000 == 0:
-						model.saveModel(model_folder+"/model%d"%step)
+						print("save model", model_folder+"model%d"%step)
+						model.saveModel(model_folder+"model%d"%step)
 
 				eeid = 0
 	
