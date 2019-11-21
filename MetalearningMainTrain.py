@@ -213,7 +213,7 @@ if __name__ == "__main__":
 
 						# output input
 
-						if step == 1:
+						if step == 1 or step < args.step +10 :
 
 							for ind in xrange(len(testCases[0])):
 								tmp_img = (testCases[0][ind,:,:,:]*255).astype(np.uint8)
