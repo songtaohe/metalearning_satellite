@@ -181,7 +181,7 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 
 		tvars = tf.trainable_variables()
 		for item in tvars:
-			print(item, tvar.name[4:])
+			print(item, item.name[4:])
 
 		self.baseparameters = len(tvars)
 
