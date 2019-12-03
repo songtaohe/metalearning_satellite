@@ -227,8 +227,9 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 			parameter_map[tvar.name[4:]] = tvar 
 
 		for tvar in tf.trainable_variables()[self.baseparameters:]:
-			tag = tvar.name[4:]
-			print(tag)
+			tag = tvar.name.split("/",1)[1]
+			#print(tag)
+
 			if tag in parameter_map:
 				print(parameter_map[tag], "-->", tvar)
 				self.update_parameter_ops.append(tf.assign(tvar, parameter_map[tag]))
