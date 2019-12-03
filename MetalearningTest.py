@@ -402,7 +402,9 @@ if __name__ == "__main__":
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
 		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
 		model.restoreModel(sys.argv[1])
+		model.update_parameters_after_restore_model() 
 
+		
 		exit() 
 
 		print("Training Metalearning Model")

@@ -177,14 +177,62 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):
 		super(MAMLFirstOrder20191119_pyramid, self).__init__(sess, num_test_updates, inner_lr, meta_block = CNNmodel20191119.buildMetaBlockV2_20191119, cnn_model=CNNmodel20191119.build_unet_16_V2_20191119, build_cnn_model = CNNmodel20191119.build_unet_16_V2_20191119, run_cnn_model = CNNmodel20191119.run_unet_16_V2_20191119)
 
+		cnn_model=CNNmodel20191119.build_unet_16_V2_20191119
 
 		tvars = tf.trainable_variables()
 		for item in tvars:
-			print(item)
+			print(item, tvar.name[4:])
+
+		self.baseparameters = len(tvars)
+
 
 		
+		with tf.variable_scope("scale1", reuse=False):
+			self.scale1_output_, _ = cnn_model(self.inputA, prefix="first_", is_training = self.is_training)
+			self.scale1_output = tf.nn.softmax(self.scale1_output_)[:,:,:,0:1]
 
 
+
+		with tf.variable_scope("scale2", reuse=False):
+
+			self.inputA_2x = tf.image.resize_images(self.inputA, [128,128])
+			self.scale2_output_, _ = cnn_model(self.inputA_2x, prefix="first_", is_training = self.is_training)
+			self.scale2_output = tf.nn.softmax(self.scale2_output_)[:,:,:,0:1]
+
+
+		with tf.variable_scope("scale3", reuse=False):
+			
+			self.inputA_4x = tf.image.resize_images(self.inputA, [64,64])
+			self.scale3_output, _ = cnn_model(self.inputA_4x, prefix="first_", is_training = self.is_training)
+			self.scale3_output = tf.nn.softmax(self.scale3_output_)[:,:,:,0:1]
+
+			
+		self.second_stage_input = tf.concat([self.scale1_output, self.scale2_output, self.scale3_output], axis=3) - 0.5 
+
+		with tf.variable_scope("second_stage", reuse=False):
+			self.baseline_output_, _ = cnn_model(self.second_stage_input, prefix="first_", is_training = self.is_training)
+
+
+		self.baseline_output = tf.nn.softmax(self.baseline_output_)
+		self.baseline_loss = CrossEntropy(self.baseline_output_, self.outputA)
+		self.baseline_train_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr, beta1 = 0.1, beta2 = 0.1).minimize(self.baseline_loss)
+
+	def update_parameters_after_restore_model(self):
+		self.update_parameter_ops = []
+
+		parameter_map = {}
+
+		for tvar in tf.trainable_variables()[:self.baseparameters]:
+			parameter_map[tvar.name[4:]] = tvar 
+
+		for tvar in tf.trainable_variables()[self.baseparameters:]
+			tag = tvar.name[4:]
+
+			if tag in parameter_map:
+				self.update_parameter_ops.append(tf.assign(tvar, parameter_map[tag]))
+
+
+		self.sess.run(self.update_parameter_ops)
 
 
 
