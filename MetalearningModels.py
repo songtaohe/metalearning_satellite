@@ -179,10 +179,11 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 
 
 		tvars = tf.trainable_variables()
-		for k,v in tvars.items():
-			print(k,v)
+		for item in tvars:
+			print(item)
 
-			
+		
+
 
 
 
