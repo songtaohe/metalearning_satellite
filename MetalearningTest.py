@@ -1,5 +1,4 @@
 
-
 import sys
 import tensorflow as tf
 from PIL import Image
@@ -7,6 +6,10 @@ import scipy
 import random
 import numpy as np 
 from time import time 
+
+from MetalearningModels import MAMLFirstOrder20191119
+
+
 
 #isBaseLine = True
 isBaseLine = False
@@ -169,10 +172,6 @@ def TestIOU(example, test_image,target_image, model,  example_sample = 20, color
 	if len(np.shape(example_target)) == 3:
 		example_target = example_target[:,:,0].reshape((4096,4096))
 
-
-
-
-
 	example_region = example['region']
 
 	test_img = scipy.ndimage.imread(test_image).astype(np.float)/255.0
@@ -275,55 +274,117 @@ def TestIOU(example, test_image,target_image, model,  example_sample = 20, color
 
 	return test_result 
 
+
+def MetaLearnerTrain(model, example, batch_size = 32, image_size = 256):
+	traindata = []
+
+	for i in range(len(example['sat'])):
+		sat = scipy.ndimage.imread(example['sat'][i]).astype(np.float)/255.0 - 0.5 
+		target = scipy.ndimage.imread(example['target'][i]).astype(np.float)/255.0
+
+		if len(np.shape(target)) == 3: 
+			target = target[:,:,0]
+
+		x1,y1,x2,y2 = example['region'][i]
+
+		traindata.append([sat[x1:x2,y1:y2], target[x1:x2,y1:y2]])
+
+	example_inputA = np.zeros((batch_size, image_size, image_size ,3))
+	example_targetA = np.zeros((batch_size, image_size, image_size, 1))
+
+	# Train the model
+	model.meta_lr_val = 0.0001
+
+	it = 101
+
+	IOUs = []
+	ts = time()
+	s_loss = 0 
+
+	for i in xrange(it):
+		loss = 0.0
+		#if i > 0:
+		for ii in xrange(batch_size):
+
+			ind = random.randint(0, len(traindata)-1)
+
+			dim = np.shape(traindata[ind][0])
+
+			
+			x = random.randint(image_size/2, dim[0]-image_size/2*3-1)
+			y = random.randint(image_size/2, dim[1]-image_size/2*3-1)
+
+			crop_sat = traindata[ind][0][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
+			crop_target = traindata[ind][1][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
+
+			angle = random.randint(-30,30)
+			angle += random.randint(0,3) * 90 
+
+
+			crop_sat = scipy.ndimage.rotate(crop_sat, angle, reshape=False)
+			crop_target = scipy.ndimage.rotate(crop_target, angle, reshape=False)
+
+			example_inputA[ii,:,:,:] = crop_sat[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
+			example_targetA[ii,:,:,:] = crop_target[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
+
+
+		_, loss = model.trainBaselineModel(example_inputA,example_targetA)
+		s_loss += loss 
+
+		if i % 10 == 0 and i > 0:
+			print(i,s_loss/10.0)
+			s_loss = 0.0 
+
+			print("Time left",(time()-ts)*(it-i)/10.0)
+			ts = time()
+
+	#print(IOUs)
+
+def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
+	sat = scipy.ndimage.imread(sat).astype(np.float)/255.0 - 0.5 
+
+	dim = np.shape(sat)
+
+	output = np.zeros((dim[0], dim[1]))
+	masks = np.zeros((dim[0],dim[1]))
+
+	for x in range(0, dim[0]-crop_size, stride):
+		inputs = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
+		faketargets = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
+		
+		ii = 0
+		for y in range(0, dim[1]-crop_size, stride):
+			inputs[ii, :,:,:] = sat[x:x+crop_size, y:y+crop_size]
+			ii += 1
+
+		outputs, _= model.runBaselineModel(inputs, faketargets)
+
+		ii = 0
+		for y in range(0, dim[1]-crop_size, stride):
+			output[x:x+crop_size, y:y+crop_size] += outputs[ii,:,:,0]
+			masks[x:x+crop_size, y:y+crop_size] += 1.0
+			ii += 1
+
+
+	output = np.divide(output, masks)
+
+	Image.fromarray((output*255).astype(np.uint8)).save(output_name)
+		
+
+
+
 if __name__ == "__main__":
-	if sys.argv[7] == "M":
-		from MAMLV1_20180406 import *
-		isBaseLine = False
-	else:
-		from MAMLV1_20180406_baseline_road_inputFilter import *
-		isBaseLine = True
+	
+	example = {"sat":[sys.argv[2]], 
+			"target":[sys.argv[3]],
+			"region":[[2550,450,2550+550,450+550]]}
 
-# load model
-# test on examples 
-	#random.seed(int(time()))
-	random.seed(123)
+	#test_img = "/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png"
 
-	# example = {"sat":"/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png", 
-	# 		"target":"/data/songtao/metalearning/dataset/boston_task5_small/region12_t2.png",
-	# 		"region":[200,200,1600,1600]}
-
-	# example = {"sat":"/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png", 
-	# 		"target":"/data/songtao/metalearning/dataset/boston_task5_small/region12_t4.png",
-	# 		"region":[200,200,1600,1600]}
-
-	# example = {"sat":"/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png", 
-	# 		"target":"/data/songtao/metalearning/example/example_region_mask_car.png",
-	# 		"region":[200,200,1600,1600]}
-
-	# example = {"sat":"/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png", 
-	# 		"target":"/data/songtao/metalearning/example/example_region_mask_tree.png",
-	# 		"region":[200,200,1600,1600]}
-
-	# example = {"sat":"/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png", 
-	# 		"target":"/data/songtao/metalearning/example/example_region_mask_grass.png",
-	# 		"region":[200,200,1600,1600]}
-
-	example = {"sat":sys.argv[2], 
-			"target":sys.argv[3],
-			"region":[2550,450,2550+550,450+550]}
-			#"region":[450,2550,450+550,2550+550]}
-			#"region":[2048,2048,4095-1024,4095-1024]}
-			#"region":[0,3072,1024,4095]} # top-right corner
-			#"region":[2048,0,4095,2047]} # bottom-left 1km by 1km region
-			#"region":[3072,0,4095,1023]} # bottom-left 0.5km by 0.5km region
-			#"region":[0,0,4095,4095]}
-
-
-	test_img = "/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png"
-
-	test_img = sys.argv[4]
-	output_folder = sys.argv[6]
-	target_img = sys.argv[5]
+	#test_img = sys.argv[4]
+	
+	output_folder = "metalearning_test_output/"
+	#target_img = sys.argv[5]
 
 	Popen("mkdir -p %s"%output_folder, shell=True).wait()
 
@@ -335,10 +396,38 @@ if __name__ == "__main__":
 
 
 	with tf.Session() as sess:
-		model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
+		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
+		model = MAMLFirstOrder20191119(sess, num_test_updates = 40,inner_lr=0.001)
 		model.restoreModel(sys.argv[1])
 
-		TestIOU(example, test_img,target_img, model,output_folder = output_folder, example_sample=5, color_channel=1, color_intensity = 0.5, threshold = 0.5)
+		print("Training Metalearning Model")
+		MetaLearnerTrain(model, example)
+		model.saveModel(output_folder+"model")
+
+		print("Applying Metalearning Model")
+		
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
