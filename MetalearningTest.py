@@ -400,7 +400,7 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
-		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 1,inner_lr=0.001)
+		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
 		model.restoreModel(sys.argv[1])
 
 		exit() 
