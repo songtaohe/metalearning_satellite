@@ -229,6 +229,7 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 			tag = tvar.name[4:]
 
 			if tag in parameter_map:
+				print(parameter_map[tag], "-->", tvar)
 				self.update_parameter_ops.append(tf.assign(tvar, parameter_map[tag]))
 
 
