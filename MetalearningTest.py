@@ -375,12 +375,12 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 if __name__ == "__main__":
 	
-	example = {"sat":[sys.argv[2]], 
-			"target":[sys.argv[3]],
-			"region":[[2550,450,2550+550,450+550]]}
+	#example = {"sat":[sys.argv[2]], 
+	#		"target":[sys.argv[3]],
+	#		"region":[[2550,450,2550+550,450+550]]}
 
 
-	example = {"sat":"data/metalearning_satellite/examples_light_pole/"}
+	#example = {"sat":"data/metalearning_satellite/examples_light_pole/"}
 
 	#test_img = "/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png"
 
