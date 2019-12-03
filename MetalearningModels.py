@@ -203,7 +203,7 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 		with tf.variable_scope("scale3", reuse=False):
 			
 			self.inputA_4x = tf.image.resize_images(self.inputA, [64,64])
-			self.scale3_output, _ = cnn_model(self.inputA_4x, prefix="first_", is_training = self.is_training)
+			self.scale3_output_, _ = cnn_model(self.inputA_4x, prefix="first_", is_training = self.is_training)
 			self.scale3_output = tf.nn.softmax(self.scale3_output_)[:,:,:,0:1]
 
 			
