@@ -173,6 +173,19 @@ class MAMLFirstOrder20191119(MAMLBase):
 
 
 
+class MAMLFirstOrder20191119_pyramid(MAMLBase):
+	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):
+		super(MAMLFirstOrder20191119_pyramid, self).__init__(sess, num_test_updates, inner_lr, meta_block = CNNmodel20191119.buildMetaBlockV2_20191119, cnn_model=CNNmodel20191119.build_unet_16_V2_20191119, build_cnn_model = CNNmodel20191119.build_unet_16_V2_20191119, run_cnn_model = CNNmodel20191119.run_unet_16_V2_20191119)
+
+
+		tvars = tf.trainable_variables()
+		for k,v in tvars.items():
+			print(k,v)
+
+			
+
+
+
 
 # class Reptile(MAMLBase):
 # 	def __init__(self, sess, num_test_updates = 20, inner_lr = 0.001):

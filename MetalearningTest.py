@@ -7,7 +7,7 @@ import random
 import numpy as np 
 from time import time 
 
-from MetalearningModels import MAMLFirstOrder20191119
+from MetalearningModels import MAMLFirstOrder20191119,MAMLFirstOrder20191119_pyramid
 
 
 
@@ -379,6 +379,9 @@ if __name__ == "__main__":
 			"target":[sys.argv[3]],
 			"region":[[2550,450,2550+550,450+550]]}
 
+
+	example = {"sat":"data/metalearning_satellite/examples_light_pole/"}
+
 	#test_img = "/data/songtao/metalearning/dataset/boston_task5_small/region12_sat.png"
 
 	#test_img = sys.argv[4]
@@ -397,8 +400,10 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
-		model = MAMLFirstOrder20191119(sess, num_test_updates = 40,inner_lr=0.001)
+		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 40,inner_lr=0.001)
 		model.restoreModel(sys.argv[1])
+
+		exit() 
 
 		print("Training Metalearning Model")
 		MetaLearnerTrain(model, example)
