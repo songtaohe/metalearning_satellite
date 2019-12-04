@@ -324,6 +324,8 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 		if len(np.shape(target)) == 3: 
 			target = target[:,:,0]
 
+		target = np.reshape((256,256))
+
 		x1,y1,x2,y2 = example['region'][i]
 
 		traindata.append([sat[x1:x2,y1:y2,:], target[x1:x2,y1:y2]])
@@ -368,6 +370,10 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 				crop_sat = scipy.ndimage.rotate(crop_sat, angle, reshape=False)
 				crop_target = scipy.ndimage.rotate(crop_target, angle, reshape=False)
 
+				crop_target[np.where(crop_target>0.5)] = 1.0 
+				crop_target[np.where(crop_target<0.6)] = 0.0 
+
+
 				example_inputA[ii,:,:,:] = crop_sat[image_size/2:image_size/2*3,image_size/2:image_size/2*3,:]
 				example_targetA[ii,:,:,0] = crop_target[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
 
@@ -407,7 +413,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 	dim = np.shape(sat)
 
 	output = np.zeros((dim[0], dim[1]))
-	masks = np.zeros((dim[0],dim[1]))
+	masks = np.ones((dim[0],dim[1]))*0.01
 
 	for x in range(0, dim[0]-crop_size+1, stride):
 		print(x)
@@ -421,12 +427,12 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 		outputs, _= model.runBaselineModel(inputs, faketargets)
 
-		print(np.amax(outputs))
+		print(np.amax(outputs[ii,32:crop_size-32,32:crop_size-32,0]))
 
 		ii = 0
 		for y in range(0, dim[1]-crop_size+1, stride):
-			output[x:x+crop_size, y:y+crop_size] += outputs[ii,:,:,0]
-			masks[x:x+crop_size, y:y+crop_size] += 1.0
+			output[x+32:x+crop_size-32, y+32:y+crop_size-32] += outputs[ii,32:crop_size-32,32:crop_size-32,0]
+			masks[x+32:x+crop_size-32, y+32:y+crop_size-32] += 1.0
 			ii += 1
 
 
