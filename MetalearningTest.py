@@ -281,7 +281,9 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	for i in range(len(example['sat'])):
 		sat = scipy.ndimage.imread(example['sat'][i]).astype(np.float)/255.0 - 0.5 
 		target = scipy.ndimage.imread(example['target'][i]).astype(np.float)/255.0
-
+		target[np.where(target>0.5)] = 1.0 
+		target[np.where(target<0.6)] = 0.0 
+		
 		if len(np.shape(target)) == 3: 
 			target = target[:,:,0]
 
@@ -299,7 +301,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	# Train the model
 	model.meta_lr_val = 0.001
 
-	it = 101
+	it = 41
 
 	IOUs = []
 	ts = time()
