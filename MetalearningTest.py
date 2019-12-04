@@ -433,7 +433,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 		for y in range(0, dim[1]-crop_size+1, stride):
 			output[x+32:x+crop_size-32, y+32:y+crop_size-32] += outputs[ii,32:crop_size-32,32:crop_size-32,0]
 			masks[x+32:x+crop_size-32, y+32:y+crop_size-32] += 1.0
-			print(np.amax(outputs[ii,32:crop_size-32,32:crop_size-32,0]))
+			#print(np.amax(outputs[ii,32:crop_size-32,32:crop_size-32,0]))
 
 			ii += 1
 
@@ -488,11 +488,11 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
-		#model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
-		model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
+		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
+		#model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
 		
 		model.restoreModel(sys.argv[1])
-		#model.update_parameters_after_restore_model() 
+		model.update_parameters_after_restore_model() 
 
 		if len(sys.argv) > 2 :
 			model.restoreModel(sys.argv[2])
