@@ -299,9 +299,9 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	example_targetA = np.zeros((batch_size, image_size, image_size, 1))
 
 	# Train the model
-	model.meta_lr_val = 0.01
+	model.meta_lr_val = 0.001
 
-	it = 101
+	it = 201
 
 	IOUs = []
 	ts = time()
@@ -353,6 +353,8 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 
 			print("Time left",(time()-ts)*(it-i)/10.0)
 			ts = time()
+			if i % 100 == 0:
+				model.saveModel(output_folder+"model%d" % i)
 
 	#print(IOUs)
 
