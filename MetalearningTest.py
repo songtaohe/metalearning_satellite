@@ -434,7 +434,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 	output_smooth = scipy.ndimage.filters.gaussian_filter(np.copy(output), 1)
 	keypoints = detect_local_minima(-output_smooth, output_smooth, 0.1)
 
-	sat = scipy.ndimage.imread(sat)
+	sat = scipy.ndimage.imread(sat_file)
 
 	for i in range(len(keypoints[0])):
 		x,y = keypoints[0][i], keypoints[1][i]
