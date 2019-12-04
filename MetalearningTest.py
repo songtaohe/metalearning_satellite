@@ -324,7 +324,8 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 		if len(np.shape(target)) == 3: 
 			target = target[:,:,0]
 
-		target = target.reshape((256,256))
+		dim = np.shape(target)
+		target = target.reshape((dim[0],dim[1]))
 
 		x1,y1,x2,y2 = example['region'][i]
 
