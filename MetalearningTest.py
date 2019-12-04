@@ -299,17 +299,17 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	example_targetA = np.zeros((batch_size, image_size, image_size, 1))
 
 	# Train the model
-	model.meta_lr_val = 0.001
+	model.meta_lr_val = 0.01
 
-	it = 61
+	it = 101
 
 	IOUs = []
 	ts = time()
 	s_loss = 0 
 
 	for i in xrange(it):
-		print(i)
-
+		print(i, model.meta_lr_val)
+		model.meta_lr_val = model.meta_lr_val * 0.99 
 		loss = 0.0
 		#if i > 0:
 		for ii in xrange(batch_size):
