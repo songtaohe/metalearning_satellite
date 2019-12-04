@@ -376,8 +376,8 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 					break
 
 			if i == 0:
-				Image.fromarray(((crop_sat+0.5) * 255.0).astype(np.uint8)).save("lightpoles/output/crop_sat%d,png" % ii)
-				Image.fromarray(((crop_target) * 255.0).astype(np.uint8)).save("lightpoles/output/crop_target%d,png" % ii)
+				Image.fromarray(((crop_sat+0.5) * 255.0).astype(np.uint8)).save("lightpoles/output/crop_sat%d.png" % ii)
+				Image.fromarray(((crop_target) * 255.0).astype(np.uint8)).save("lightpoles/output/crop_target%d.png" % ii)
 
 
 			example_inputA[ii,:,:,0] = example_inputA[ii,:,:,0] * (random.random() * 0.3 + 0.7)
