@@ -219,8 +219,7 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 		self.baseline_train_op = tf.train.AdamOptimizer(learning_rate=self.meta_lr, beta1 = 0.1, beta2 = 0.1).minimize(self.baseline_loss)
 
 		self.sess.run(tf.global_variables_initializer())
-		self.saver = tf.train.Saver(max_to_keep=100)
-
+		
 
 
 	def update_parameters_after_restore_model(self):
@@ -243,6 +242,7 @@ class MAMLFirstOrder20191119_pyramid(MAMLBase):
 
 		self.sess.run(self.update_parameter_ops)
 
+		self.saver = tf.train.Saver(max_to_keep=100)
 
 
 # class Reptile(MAMLBase):
