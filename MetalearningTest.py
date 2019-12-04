@@ -302,6 +302,8 @@ def MetaLearnerTrain(model, example, batch_size = 64, image_size = 256):
 	s_loss = 0 
 
 	for i in xrange(it):
+		print(i)
+		
 		loss = 0.0
 		#if i > 0:
 		for ii in xrange(batch_size):
@@ -337,6 +339,7 @@ def MetaLearnerTrain(model, example, batch_size = 64, image_size = 256):
 
 		_, loss = model.trainBaselineModel(example_inputA,example_targetA)
 		s_loss += loss 
+		
 
 		if i % 10 == 0 and i > 0:
 			print(i,s_loss/10.0)
