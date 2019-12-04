@@ -362,20 +362,20 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 	output = np.zeros((dim[0], dim[1]))
 	masks = np.zeros((dim[0],dim[1]))
 
-	for x in range(0, dim[0]-crop_size, stride):
+	for x in range(0, dim[0]-crop_size+1, stride):
 		print(x)
 		inputs = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
 		faketargets = np.zeros((dim[1]/stride-1, crop_size, crop_size, 1))
 		
 		ii = 0
-		for y in range(0, dim[1]-crop_size, stride):
+		for y in range(0, dim[1]-crop_size+1, stride):
 			inputs[ii, :,:,:] = sat[x:x+crop_size, y:y+crop_size]
 			ii += 1
 
 		outputs, _= model.runBaselineModel(inputs, faketargets)
 
 		ii = 0
-		for y in range(0, dim[1]-crop_size, stride):
+		for y in range(0, dim[1]-crop_size+1, stride):
 			output[x:x+crop_size, y:y+crop_size] += outputs[ii,:,:,0]
 			masks[x:x+crop_size, y:y+crop_size] += 1.0
 			ii += 1
@@ -419,9 +419,11 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
-		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
+		#model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
+		model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
+		
 		model.restoreModel(sys.argv[1])
-		model.update_parameters_after_restore_model() 
+		#model.update_parameters_after_restore_model() 
 
 		if len(sys.argv) > 2 :
 			model.restoreModel(sys.argv[2])
