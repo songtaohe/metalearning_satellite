@@ -290,14 +290,14 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 		traindata.append([sat[x1:x2,y1:y2,:], target[x1:x2,y1:y2]])
 
 		Image.fromarray(((sat[x1:x2,y1:y2,:] + 0.5)*255).astype(np.uint8)).save("cropsat%d.png" % i)
-		Image.fromarray(((target[x1:x2,y1:y2] + 0.5)*255).astype(np.uint8)).save("croptarget%d.png" % i)
+		Image.fromarray(((target[x1:x2,y1:y2])*255).astype(np.uint8)).save("croptarget%d.png" % i)
 
 
 	example_inputA = np.zeros((batch_size, image_size, image_size ,3))
 	example_targetA = np.zeros((batch_size, image_size, image_size, 1))
 
 	# Train the model
-	model.meta_lr_val = 0.0001
+	model.meta_lr_val = 0.001
 
 	it = 101
 
