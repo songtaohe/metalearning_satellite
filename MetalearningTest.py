@@ -287,7 +287,11 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 
 		x1,y1,x2,y2 = example['region'][i]
 
-		traindata.append([sat[x1:x2,y1:y2], target[x1:x2,y1:y2]])
+		traindata.append([sat[x1:x2,y1:y2,:], target[x1:x2,y1:y2]])
+
+		Image.fromarray(((sat[x1:x2,y1:y2,:] + 0.5)*255).astype(np.uint8)).save("cropsat%d.png" % i)
+		Image.fromarray(((target[x1:x2,y1:y2] + 0.5)*255).astype(np.uint8)).save("croptarget%d.png" % i)
+
 
 	example_inputA = np.zeros((batch_size, image_size, image_size ,3))
 	example_targetA = np.zeros((batch_size, image_size, image_size, 1))
@@ -315,7 +319,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 				x = random.randint(image_size/2, dim[0]-image_size/2*3-1)
 				y = random.randint(image_size/2, dim[1]-image_size/2*3-1)
 
-				crop_sat = traindata[ind][0][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
+				crop_sat = traindata[ind][0][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3,:]
 				crop_target = traindata[ind][1][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
 
 				angle = random.randint(-30,30)
@@ -361,7 +365,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 	for x in range(0, dim[0]-crop_size, stride):
 		print(x)
 		inputs = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
-		faketargets = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
+		faketargets = np.zeros((dim[1]/stride-1, crop_size, crop_size, 1))
 		
 		ii = 0
 		for y in range(0, dim[1]-crop_size, stride):
@@ -413,21 +417,18 @@ if __name__ == "__main__":
 			"target":["lightpoles/sat121_target.png"],
 			"region":[[1495,3122,2803,4541]]}
 
-
-
-
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
 		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
 		model.restoreModel(sys.argv[1])
 		model.update_parameters_after_restore_model() 
 
-
-		#exit() 
-
-		print("Training Metalearning Model")
-		MetaLearnerTrain(model, example)
-		model.saveModel(output_folder+"model")
+		if len(sys.argv) > 2 :
+			model.restoreModel(sys.argv[2])
+		else:
+			print("Training Metalearning Model")
+			MetaLearnerTrain(model, example)
+			model.saveModel(output_folder+"model")
 
 		print("Applying Metalearning Model")
 		MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_output.png")
