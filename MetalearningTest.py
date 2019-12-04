@@ -275,7 +275,7 @@ def TestIOU(example, test_image,target_image, model,  example_sample = 20, color
 	return test_result 
 
 
-def MetaLearnerTrain(model, example, batch_size = 64, image_size = 256):
+def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	traindata = []
 
 	for i in range(len(example['sat'])):
@@ -303,7 +303,7 @@ def MetaLearnerTrain(model, example, batch_size = 64, image_size = 256):
 
 	for i in xrange(it):
 		print(i)
-		
+
 		loss = 0.0
 		#if i > 0:
 		for ii in xrange(batch_size):
