@@ -323,8 +323,8 @@ def MetaLearnerTrain(model, example, batch_size = 64, image_size = 256):
 				crop_sat = scipy.ndimage.rotate(crop_sat, angle, reshape=False)
 				crop_target = scipy.ndimage.rotate(crop_target, angle, reshape=False)
 
-				example_inputA[ii,:,:,:] = crop_sat[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
-				example_targetA[ii,:,:,:] = crop_target[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
+				example_inputA[ii,:,:,:] = crop_sat[image_size/2:image_size/2*3,image_size/2:image_size/2*3,:]
+				example_targetA[ii,:,:,:] = crop_target[image_size/2:image_size/2*3,image_size/2:image_size/2*3,:]
 
 				v_sum = np.sum(example_targetA[ii,:,:,0])
 				if v_sum > 20:
