@@ -441,7 +441,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 		cv2.circle(sat, (y,x), 25, (255,0,0), 2)
 
-	Image.fromarray(sat_file).save(output_name.replace("output","marked"))
+	Image.fromarray(sat).save(output_name.replace("output","marked"))
 
 
 if __name__ == "__main__":
