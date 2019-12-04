@@ -340,7 +340,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	# Train the model
 	model.meta_lr_val = 0.001
 
-	it = 21
+	it = 41
 
 	IOUs = []
 	ts = time()
