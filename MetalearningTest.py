@@ -341,7 +341,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	# Train the model
 	model.meta_lr_val = 0.0001
 
-	it = 101
+	it = 1001
 
 	IOUs = []
 	ts = time()
@@ -349,7 +349,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 
 	for i in xrange(it):
 		print(i, model.meta_lr_val)
-		model.meta_lr_val = model.meta_lr_val * 0.99 
+		#model.meta_lr_val = model.meta_lr_val * 0.99 
 		loss = 0.0
 		#if i > 0:
 		for ii in xrange(batch_size):
@@ -404,6 +404,10 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 			ts = time()
 			if i % 100 == 0:
 				model.saveModel(output_folder+"model%d" % i)
+				MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_step%d_output.png" % i)
+
+
+
 
 	#print(IOUs)
 
