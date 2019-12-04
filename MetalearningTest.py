@@ -9,6 +9,43 @@ from time import time
 from subprocess import Popen 
 from MetalearningModels import MAMLFirstOrder20191119,MAMLFirstOrder20191119_pyramid
 
+import cv2 
+import scipy.ndimage.filters as filters
+import scipy.ndimage.morphology as morphology
+
+def detect_local_minima(arr, mask, threshold = 0.5):
+    # https://stackoverflow.com/questions/3684484/peak-detection-in-a-2d-array/3689710#3689710
+    """
+    Takes an array and detects the troughs using the local maximum filter.
+    Returns a boolean mask of the troughs (i.e. 1 when
+    the pixel's value is the neighborhood maximum, 0 otherwise)
+    """
+    # define an connected neighborhood
+    # http://www.scipy.org/doc/api_docs/SciPy.ndimage.morphology.html#generate_binary_structure
+    neighborhood = morphology.generate_binary_structure(len(arr.shape),2)
+    # apply the local minimum filter; all locations of minimum value 
+    # in their neighborhood are set to 1
+    # http://www.scipy.org/doc/api_docs/SciPy.ndimage.filters.html#minimum_filter
+    local_min = (filters.minimum_filter(arr, footprint=neighborhood)==arr)
+    # local_min is a mask that contains the peaks we are 
+    # looking for, but also the background.
+    # In order to isolate the peaks we must remove the background from the mask.
+    # 
+    # we create the mask of the background
+    background = (arr==0)
+    # 
+    # a little technicality: we must erode the background in order to 
+    # successfully subtract it from local_min, otherwise a line will 
+    # appear along the background border (artifact of the local minimum filter)
+    # http://www.scipy.org/doc/api_docs/SciPy.ndimage.morphology.html#binary_erosion
+    eroded_background = morphology.binary_erosion(
+        background, structure=neighborhood, border_value=1)
+    # 
+    # we obtain the final mask, containing only peaks, 
+    # by removing the background from the local_min mask
+    detected_minima = local_min ^ eroded_background
+    return np.where((detected_minima & (mask > threshold)))  
+
 
 
 #isBaseLine = True
@@ -301,7 +338,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	# Train the model
 	model.meta_lr_val = 0.001
 
-	it = 201
+	it = 21
 
 	IOUs = []
 	ts = time()
@@ -378,6 +415,8 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 		outputs, _= model.runBaselineModel(inputs, faketargets)
 
+		print(np.amax(outputs))
+
 		ii = 0
 		for y in range(0, dim[1]-crop_size+1, stride):
 			output[x:x+crop_size, y:y+crop_size] += outputs[ii,:,:,0]
@@ -390,6 +429,17 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 	Image.fromarray((output*255).astype(np.uint8)).save(output_name)
 		
 
+	output_smooth = scipy.ndimage.filters.gaussian_filter(np.copy(output), 1)
+	keypoints = detect_local_minima(-output_smooth, output_smooth, 0.1)
+
+	sat = scipy.ndimage.imread(sat)
+
+	for i in range(len(keypoints[0])):
+		x,y = keypoints[0][i], keypoints[1][i]
+
+		cv2.circle(sat, (y,x), 25, (255,0,0), 2)
+
+	Image.fromarray(sat).save(output_name.replace("output","marked"))
 
 
 if __name__ == "__main__":

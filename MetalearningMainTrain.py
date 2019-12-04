@@ -183,7 +183,7 @@ if __name__ == "__main__":
 					train_loss = s/cc
 					longterm_loss += s/cc
 
-					if step % 1000 == 0:
+					if step % 5000 == 0:
 						print("save model", model_folder+"model%d"%step)
 						model.saveModel(model_folder+"model%d"%step)
 
