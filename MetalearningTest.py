@@ -426,6 +426,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 
 	output = np.divide(output, masks)
+	print(np.amax(output))
 
 	Image.fromarray((output*255).astype(np.uint8)).save(output_name)
 		
