@@ -275,7 +275,7 @@ def TestIOU(example, test_image,target_image, model,  example_sample = 20, color
 	return test_result 
 
 
-def MetaLearnerTrain(model, example, batch_size = 32, image_size = 256):
+def MetaLearnerTrain(model, example, batch_size = 64, image_size = 256):
 	traindata = []
 
 	for i in range(len(example['sat'])):
@@ -305,27 +305,34 @@ def MetaLearnerTrain(model, example, batch_size = 32, image_size = 256):
 		loss = 0.0
 		#if i > 0:
 		for ii in xrange(batch_size):
+			while True:
+				ind = random.randint(0, len(traindata)-1)
 
-			ind = random.randint(0, len(traindata)-1)
+				dim = np.shape(traindata[ind][0])
 
-			dim = np.shape(traindata[ind][0])
+				x = random.randint(image_size/2, dim[0]-image_size/2*3-1)
+				y = random.randint(image_size/2, dim[1]-image_size/2*3-1)
 
-			
-			x = random.randint(image_size/2, dim[0]-image_size/2*3-1)
-			y = random.randint(image_size/2, dim[1]-image_size/2*3-1)
+				crop_sat = traindata[ind][0][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
+				crop_target = traindata[ind][1][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
 
-			crop_sat = traindata[ind][0][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
-			crop_target = traindata[ind][1][x-image_size/2:x+image_size/2*3, y-image_size/2:y+image_size/2*3]
-
-			angle = random.randint(-30,30)
-			angle += random.randint(0,3) * 90 
+				angle = random.randint(-30,30)
+				angle += random.randint(0,3) * 90 
 
 
-			crop_sat = scipy.ndimage.rotate(crop_sat, angle, reshape=False)
-			crop_target = scipy.ndimage.rotate(crop_target, angle, reshape=False)
+				crop_sat = scipy.ndimage.rotate(crop_sat, angle, reshape=False)
+				crop_target = scipy.ndimage.rotate(crop_target, angle, reshape=False)
 
-			example_inputA[ii,:,:,:] = crop_sat[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
-			example_targetA[ii,:,:,:] = crop_target[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
+				example_inputA[ii,:,:,:] = crop_sat[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
+				example_targetA[ii,:,:,:] = crop_target[image_size/2:image_size/2*3,image_size/2:image_size/2*3]
+
+				v_sum = np.sum(example_targetA[ii,:,:,0])
+				if v_sum > 20:
+					break
+
+			example_inputA[ii,:,:,0] = example_inputA[ii,:,:,0] * (random.random() * 0.3 + 0.7)
+			example_inputA[ii,:,:,1] = example_inputA[ii,:,:,1] * (random.random() * 0.3 + 0.7)
+			example_inputA[ii,:,:,2] = example_inputA[ii,:,:,2] * (random.random() * 0.3 + 0.7)
 
 
 		_, loss = model.trainBaselineModel(example_inputA,example_targetA)
@@ -349,6 +356,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 	masks = np.zeros((dim[0],dim[1]))
 
 	for x in range(0, dim[0]-crop_size, stride):
+		print(x)
 		inputs = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
 		faketargets = np.zeros((dim[1]/stride-1, crop_size, crop_size, 3))
 		
@@ -386,7 +394,7 @@ if __name__ == "__main__":
 
 	#test_img = sys.argv[4]
 	
-	output_folder = "metalearning_test_output/"
+	output_folder = "lightpoles/output/"
 	#target_img = sys.argv[5]
 
 	Popen("mkdir -p %s"%output_folder, shell=True).wait()
@@ -398,24 +406,28 @@ if __name__ == "__main__":
 	# 	Test(example, test_img, model,output_folder = "/data/songtao/metalearning/example/e3/", example_sample=5, color_channel=0, color_intensity = 0.8)
 
 
+	example = {"sat":["lightpoles/sat121.png"], 
+			"target":["lightpoles/sat121_target.png"],
+			"region":[[1495,3122,2803,4541]]}
+
+
+
+
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
 		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
 		model.restoreModel(sys.argv[1])
 		model.update_parameters_after_restore_model() 
 
-		
-		exit() 
+
+		#exit() 
 
 		print("Training Metalearning Model")
 		MetaLearnerTrain(model, example)
 		model.saveModel(output_folder+"model")
 
 		print("Applying Metalearning Model")
-		
-		
-
-
+		MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_output.png")
 
 
 
