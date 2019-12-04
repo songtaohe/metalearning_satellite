@@ -428,12 +428,13 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 		outputs, _= model.runBaselineModel(inputs, faketargets)
 
-		print(np.amax(outputs[ii,32:crop_size-32,32:crop_size-32,0]))
-
+		
 		ii = 0
 		for y in range(0, dim[1]-crop_size+1, stride):
 			output[x+32:x+crop_size-32, y+32:y+crop_size-32] += outputs[ii,32:crop_size-32,32:crop_size-32,0]
 			masks[x+32:x+crop_size-32, y+32:y+crop_size-32] += 1.0
+			print(np.amax(outputs[ii,32:crop_size-32,32:crop_size-32,0]))
+
 			ii += 1
 
 
