@@ -508,9 +508,9 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 
 		top_100[tx:tx+128, ty, 0] = 255-i
-		top_100[tx:tx+128, ty+128, 0] = 255-i
+		top_100[tx:tx+128, ty+127, 0] = 255-i
 		top_100[tx, ty:ty+128, 0] = 255-i
-		top_100[tx+128, ty:ty+128, 0] = 255-i
+		top_100[tx+127, ty:ty+128, 0] = 255-i
 
 
 		i = i + 1 
