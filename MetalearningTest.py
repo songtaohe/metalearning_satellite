@@ -469,6 +469,10 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 		x = pole[0]
 		y = pole[1]
 
+		if x < 64 or x > dim[0]-64 or y < 64 or y > dim[1]:
+			continue
+
+
 		candidates = list(idx.intersection((x-20,y-20,x+20,y+20)))
 
 		if len(candidates) == 0:
@@ -502,15 +506,20 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 		top_100[tx:tx+128, ty:ty+128, :] = sat[x-64:x+64, y-64:y+64,:]
 
+
+		top_100[tx:tx+128, ty, 0] = 255-i
+		top_100[tx:tx+128, ty+128, 0] = 255-i
+		top_100[tx, ty:ty+128, 0] = 255-i
+		top_100[tx+128, ty:ty+128, 0] = 255-i
+
+
 		i = i + 1 
 		if i == 200:
 			break 
 
-
-
 	Image.fromarray(top_100).save(output_name.replace("output","top100"))
 
-
+	print(i)
 
 
 
