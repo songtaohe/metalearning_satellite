@@ -407,8 +407,6 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 				MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_step%d_output.png" % i)
 
 
-
-
 	#print(IOUs)
 
 def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
@@ -557,12 +555,12 @@ if __name__ == "__main__":
 			"region":[[1495,3122,2803,4541]]}
 
 	with tf.Session() as sess:
-		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
-		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
+		model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
+		#model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
 		#model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
 		
 		model.restoreModel(sys.argv[1])
-		model.update_parameters_after_restore_model() 
+		#model.update_parameters_after_restore_model() 
 
 		if len(sys.argv) > 2 :
 			model.restoreModel(sys.argv[2])
