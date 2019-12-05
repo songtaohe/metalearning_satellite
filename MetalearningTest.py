@@ -555,9 +555,9 @@ if __name__ == "__main__":
 			"region":[[1495,3122,2803,4541]]}
 
 	with tf.Session() as sess:
-		model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
+		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
 		#model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
-		#model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
+		model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
 		
 		model.restoreModel(sys.argv[1])
 		#model.update_parameters_after_restore_model() 
