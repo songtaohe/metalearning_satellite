@@ -449,7 +449,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 		
 
 	output_smooth = scipy.ndimage.filters.gaussian_filter(np.copy(output), 1)
-	keypoints = detect_local_minima(-output_smooth, output_smooth, 0.01)
+	keypoints = detect_local_minima(-output_smooth, output_smooth, 0.05)
 
 	poles = []
 
@@ -489,20 +489,22 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 		x,y = pole[0], pole[1]
 
-		cv2.circle(sat, (y,x), 25, (255,0,0), 2)
+		c = int(255 - (pole[2] * 255))
+
+		cv2.circle(sat, (y,x), 25, (255,c,c), 2)
 
 	Image.fromarray(sat).save(output_name.replace("output","marked"))
 
 
 	sat = scipy.ndimage.imread(sat_file)
-	top_100 = np.zeros((128*10,128*20,3), dtype=np.uint8)
+	top_100 = np.zeros((128*20,128*10,3), dtype=np.uint8)
 
 	i = 0 
 	for pole in filterred_poles:
 		x,y = pole[0], pole[1]
 
-		tx = (i % 10) * 128
-		ty = (i / 10) * 128
+		tx = (i / 10) * 128
+		ty = (i % 10) * 128
 
 		top_100[tx:tx+128, ty:ty+128, :] = sat[x-64:x+64, y-64:y+64,:]
 
