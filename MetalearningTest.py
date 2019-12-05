@@ -8,7 +8,7 @@ import numpy as np
 from time import time 
 from subprocess import Popen 
 from MetalearningModels import MAMLFirstOrder20191119,MAMLFirstOrder20191119_pyramid
-
+from rtree import index 
 import cv2 
 import scipy.ndimage.filters as filters
 import scipy.ndimage.morphology as morphology
@@ -449,16 +449,71 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 		
 
 	output_smooth = scipy.ndimage.filters.gaussian_filter(np.copy(output), 1)
-	keypoints = detect_local_minima(-output_smooth, output_smooth, 0.1)
+	keypoints = detect_local_minima(-output_smooth, output_smooth, 0.01)
 
-	sat = scipy.ndimage.imread(sat_file)
+	poles = []
 
 	for i in range(len(keypoints[0])):
 		x,y = keypoints[0][i], keypoints[1][i]
 
+		poles.append((x,y,output_smooth[x,y]))
+
+	poles = sorted(poles, key=lambda x:x[2], reverse=True)
+
+	filterred_poles = []
+
+	idx = index.Index()
+
+	i = 0 
+	for pole in poles:
+		x = pole[0]
+		y = pole[1]
+
+		candidates = list(idx.intersection((x-20,y-20,x+20,y+20)))
+
+		if len(candidates) == 0:
+			idx.insert(i,(x-1,y-1,x+1,y+1))
+			i = i + 1 
+
+			filterred_poles.append(pole)
+
+
+	sat = scipy.ndimage.imread(sat_file)
+
+	#for i in range(len(keypoints[0])):
+	for pole in filterred_poles:
+
+		x,y = pole[0], pole[1]
+
 		cv2.circle(sat, (y,x), 25, (255,0,0), 2)
 
 	Image.fromarray(sat).save(output_name.replace("output","marked"))
+
+
+	sat = scipy.ndimage.imread(sat_file)
+	top_100 = np.zeros((128*10,128*20,3))
+
+	i = 0 
+	for pole in filterred_poles:
+		x,y = pole[0], pole[1]
+
+		tx = (i % 10) * 128
+		ty = (i / 10) * 128
+
+		top_100[tx:tx+128, ty:ty+128, :] = sat[x-64:x+64, y-64:y+64,:]
+
+		i = i + 1 
+		if i == 200:
+			break 
+
+
+
+	Image.fromarray(top_100).save(output_name.replace("output","top100"))
+
+
+
+
+
 
 
 if __name__ == "__main__":
