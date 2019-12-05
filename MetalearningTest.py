@@ -495,7 +495,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 
 
 	sat = scipy.ndimage.imread(sat_file)
-	top_100 = np.zeros((128*10,128*20,3))
+	top_100 = np.zeros((128*10,128*20,3), dtype=np.uint8)
 
 	i = 0 
 	for pole in filterred_poles:
