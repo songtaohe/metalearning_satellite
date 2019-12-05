@@ -570,7 +570,11 @@ if __name__ == "__main__":
 			model.saveModel(output_folder+"model")
 
 		print("Applying Metalearning Model")
-		MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_output.png")
+		
+		for tileid in range(121,130):
+			MetaLearnerApply(model, "lightpoles/sat%d.png" % tileid,"lightpoles/sat%d_output.png" % tileid)
+		#MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_output.png")
+		
 
 
 
