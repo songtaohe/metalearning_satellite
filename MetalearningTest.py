@@ -469,7 +469,7 @@ def MetaLearnerApply(model, sat, output_name, crop_size = 256, stride = 128):
 		x = pole[0]
 		y = pole[1]
 
-		if x < 64 or x > dim[0]-64 or y < 64 or y > dim[1]:
+		if x < 64 or x > dim[0]-64 or y < 64 or y > dim[1]-64:
 			continue
 
 
