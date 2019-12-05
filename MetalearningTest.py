@@ -341,7 +341,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 	# Train the model
 	model.meta_lr_val = 0.0001
 
-	it = 1001
+	it = 2001
 
 	IOUs = []
 	ts = time()
@@ -403,7 +403,7 @@ def MetaLearnerTrain(model, example, batch_size = 16, image_size = 256):
 			print("Time left",(time()-ts)*(it-i)/10.0)
 			ts = time()
 			if i % 100 == 0:
-				model.saveModel(output_folder+"model%d" % i)
+				model.saveModel(output_folder+"model_p_%d" % i)
 				MetaLearnerApply(model, "lightpoles/sat121.png","lightpoles/sat121_step%d_output.png" % i)
 
 
@@ -558,11 +558,11 @@ if __name__ == "__main__":
 
 	with tf.Session() as sess:
 		#model = MAML(sess,num_test_updates = 40,inner_lr=0.001)
-		#model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
-		model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
+		model = MAMLFirstOrder20191119_pyramid(sess, num_test_updates = 2,inner_lr=0.001)
+		#model = MAMLFirstOrder20191119(sess, num_test_updates = 2,inner_lr=0.001)
 		
 		model.restoreModel(sys.argv[1])
-		#model.update_parameters_after_restore_model() 
+		model.update_parameters_after_restore_model() 
 
 		if len(sys.argv) > 2 :
 			model.restoreModel(sys.argv[2])
